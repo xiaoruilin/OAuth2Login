@@ -8,86 +8,71 @@ using Oauth2Login.Core;
 
 namespace Oauth2Login.Service
 {
-    public class FacebookService : IClientService
+    public class FacebookService : BaseOauth2Service
     {
         private static string _oauthUrl = "";
-        private AbstractClientProvider _client;
 
-        public FacebookService()
-        {
-        }
+        public FacebookService(AbstractClientProvider oClient) : base(oClient) { }
 
-        public FacebookService(AbstractClientProvider oCleint)
-        {
-            _client = oCleint;
-        }
-
-
-        public void CreateOAuthClient(IOAuthContext oContext)
-        {
-            _client = oContext.Client;
-        }
-
-        public void CreateOAuthClient(AbstractClientProvider oClient)
-        {
-            _client = oClient;
-        }
-
-        public string BeginAuthentication()
+        public override string BeginAuthentication()
         {
             if (_client != null)
             {
-                _oauthUrl = string.Format("https://www.facebook.com/dialog/oauth?" +
-                                          "client_id={0}&redirect_uri={1}&scope={2}&state={3}&display=popup",
-                    _client.ClientId,
-                    HttpUtility.HtmlEncode(_client.CallBackUrl),
-                    _client.Scope,
-                    "");
+                var qstring = QueryStringBuilder.Build(
+                    "client_id", _client.ClientId,
+                    "redirect_uri", _client.CallBackUrl,
+                    "scope", _client.Scope,
+                    "state", "",
+                    "display", "popup"
+                    );
+
+                _oauthUrl = "https://www.facebook.com/dialog/oauth?" + qstring;
+
                 return _oauthUrl;
             }
             throw new Exception("ERROR: BeginAuth the client not found!");
         }
 
-        public string RequestToken()
+        public override string RequestToken()
         {
             string code = HttpContext.Current.Request.Params["code"];
             if (code != null)
             {
                 string tokenUrl = string.Format("https://graph.facebook.com/oauth/access_token?");
-                string post = string.Format("client_id={0}&redirect_uri={1}&client_secret={2}&code={3}",
-                    _client.ClientId,
-                    HttpUtility.HtmlEncode(_client.CallBackUrl),
-                    _client.ClientSecret,
-                    code);
-                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded",
-                    null, post, _client.Proxy);
+                string postData = QueryStringBuilder.Build(
+                    "client_id", _client.ClientId,
+                    "redirect_uri", _client.CallBackUrl,
+                    "client_secret", _client.ClientSecret,
+                    "code", code
+                );
+
+                string resonseJson = HttpPost(tokenUrl, postData);
                 resonseJson = "{\"" + resonseJson.Replace("=", "\":\"").Replace("&", "\",\"") + "\"}";
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
 
-        public Dictionary<string, string> RequestUserProfile()
+        public override Dictionary<string, string> RequestUserProfile()
         {
             string profileUrl = string.Format("https://graph.facebook.com/me?access_token={0}", _client.Token);
-            var header = new NameValueCollection();
-            header.Add("Accept-Language", "en-US");
-            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null,
-                _client.Proxy);
-            _client.ProfileJsonString = result;
-            FacebookClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result,
-                new FacebookClient.UserProfile());
 
-            var dictionary = new Dictionary<string, string>();
-            dictionary.Add("source", "Facebook");
-            dictionary.Add("id", data.Id);
-            dictionary.Add("name", data.Name);
-            dictionary.Add("first_name", data.First_name);
-            dictionary.Add("last_name", data.Last_name);
-            dictionary.Add("link", data.Link);
-            dictionary.Add("gender", data.Gender);
-            dictionary.Add("email", data.Email);
-            dictionary.Add("picture", data.Picture);
+            string result = HttpGet(profileUrl);
+            _client.ProfileJsonString = result;
+            var data = JsonConvert.DeserializeAnonymousType(result, new FacebookClient.UserProfile());
+
+            var dictionary = new Dictionary<string, string>
+            {
+                {"source", "Facebook"},
+                {"id", data.Id},
+                {"name", data.Name},
+                {"first_name", data.First_name},
+                {"last_name", data.Last_name},
+                {"link", data.Link},
+                {"gender", data.Gender},
+                {"email", data.Email},
+                {"picture", data.Picture}
+            };
             return dictionary;
         }
     }
