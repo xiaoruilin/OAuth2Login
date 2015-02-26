@@ -55,7 +55,7 @@ namespace Oauth2Login.Service
 
         public override Dictionary<string, string> RequestUserProfile()
         {
-            string profileUrl = string.Format("https://graph.facebook.com/me?access_token={0}", _client.Token);
+            string profileUrl = "https://graph.facebook.com/me?access_token=" + _client.Token;
 
             string result = HttpGet(profileUrl);
             _client.ProfileJsonString = result;

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Web;
 using Newtonsoft.Json;
 using Oauth2Login.Client;
@@ -8,87 +7,74 @@ using Oauth2Login.Core;
 
 namespace Oauth2Login.Service
 {
-    public class GoogleService : IClientService
+    public class GoogleService : BaseOauth2Service
     {
         private static string _oauthUrl = "";
-        private AbstractClientProvider _client;
 
-        public GoogleService()
-        {
-        }
+        public GoogleService(AbstractClientProvider oClient) : base(oClient) { }
 
-        public GoogleService(AbstractClientProvider oCleint)
-        {
-            _client = oCleint;
-        }
-
-        public void CreateOAuthClient(IOAuthContext oContext)
-        {
-            _client = oContext.Client;
-        }
-
-        public void CreateOAuthClient(AbstractClientProvider oClient)
-        {
-            _client = oClient;
-        }
-
-        public string BeginAuthentication()
+        public override string BeginAuthentication()
         {
             if (_client != null)
             {
-                _oauthUrl = string.Format("https://accounts.google.com/o/oauth2/auth?" +
-                                          "scope={0}&state={1}&redirect_uri={2}&client_id={3}&response_type=code&approval_prompt=auto&access_type=online",
-                    HttpUtility.HtmlEncode(_client.Scope),
-                    "1",
-                    HttpUtility.UrlEncode(_client.CallBackUrl),
-                    HttpUtility.UrlEncode(_client.ClientId));
+                var qstring = QueryStringBuilder.Build(
+                    "scope", _client.Scope,
+                    "state", "1",
+                    "redirect_uri", _client.CallBackUrl,
+                    "client_id", _client.ClientId,
+                    "response_type", "code",
+                    "approval_prompt", "auto",
+                    "access_type", "online"
+                    );
+
+                _oauthUrl = "https://accounts.google.com/o/oauth2/auth?" + qstring;
+
                 return _oauthUrl;
             }
-            throw new Exception("ERROR: [GoogleService] BeginAuth the cleint not found!");
+            throw new Exception("ERROR: [GoogleService] BeginAuth the client not found!");
         }
 
-        public string RequestToken()
+        public override string RequestToken()
         {
             string code = HttpContext.Current.Request.Params["code"];
             if (code != null)
             {
-                string tokenUrl = "https://accounts.google.com/o/oauth2/token";
-                string post =
-                    string.Format(
-                        "code={0}&client_id={1}&client_secret={2}&redirect_uri={3}&grant_type=authorization_code",
-                        code,
-                        HttpUtility.HtmlEncode(_client.ClientId),
-                        _client.ClientSecret,
-                        HttpUtility.HtmlEncode(_client.CallBackUrl));
-                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null,
-                    post, _client.Proxy);
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
+                const string tokenUrl = "https://accounts.google.com/o/oauth2/token";
+                var postData = QueryStringBuilder.Build(
+                    "code", code,
+                    "client_id", _client.ClientId,
+                    "client_secret", _client.ClientSecret,
+                    "redirect_uri", _client.CallBackUrl,
+                    "grant_type", "authorization_code"
+                    );
+
+                string resonseJson = HttpPost(tokenUrl, postData);
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
 
-        public Dictionary<string, string> RequestUserProfile()
+        public override Dictionary<string, string> RequestUserProfile()
         {
-            string profileUrl = string.Format("https://www.googleapis.com/oauth2/v1/userinfo?access_token={0}",
-                _client.Token);
-            var header = new NameValueCollection();
-            header.Add("Accept-Language", "en_US");
-            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null,
-                _client.Proxy);
-            _client.ProfileJsonString = result;
-            GoogleClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new GoogleClient.UserProfile());
+            string profileUrl = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + _client.Token;
 
-            var dictionary = new Dictionary<string, string>();
-            dictionary.Add("source", "Google");
-            dictionary.Add("id", data.Id);
-            dictionary.Add("email", data.Email);
-            dictionary.Add("verified_email", data.Verified_email);
-            dictionary.Add("name", data.Name);
-            dictionary.Add("given_name", data.Given_name);
-            dictionary.Add("family_name", data.Family_name);
-            dictionary.Add("link", data.Link);
-            dictionary.Add("picture", data.Picture);
-            dictionary.Add("gender", data.Gender);
+            string result = HttpGet(profileUrl);
+            _client.ProfileJsonString = result;
+            var data = JsonConvert.DeserializeAnonymousType(result, new GoogleClient.UserProfile());
+
+            var dictionary = new Dictionary<string, string>
+            {
+                {"source", "Google"},
+                {"id", data.Id},
+                {"email", data.Email},
+                {"verified_email", data.Verified_email},
+                {"name", data.Name},
+                {"given_name", data.Given_name},
+                {"family_name", data.Family_name},
+                {"link", data.Link},
+                {"picture", data.Picture},
+                {"gender", data.Gender}
+            };
             return dictionary;
         }
     }
