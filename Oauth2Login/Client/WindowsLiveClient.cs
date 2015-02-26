@@ -1,18 +1,26 @@
-﻿using System;
+﻿using Oauth2Login.Service;
 
 namespace Oauth2Login.Client
 {
-    public class WindowsLiveClient :AbstractClientProvider
+    public class WindowsLiveClient : AbstractClientProvider
     {
         public WindowsLiveClient()
         {
         }
 
         public WindowsLiveClient(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
-                                 string oAcceptedUrl, string oFailedUrl, string oProxy)
+            string oAcceptedUrl, string oFailedUrl, string oProxy)
             : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
         {
-            ServiceType = typeof (Oauth2Login.Service.WindowsLiveService);
+            ServiceType = typeof (WindowsLiveService);
+        }
+
+        public class Emails
+        {
+            public string Preferred { get; set; }
+            public string Account { get; set; }
+            public string Personal { get; set; }
+            public string Business { get; set; }
         }
 
         public class UserProfile
@@ -25,14 +33,5 @@ namespace Oauth2Login.Client
             public string Gender { get; set; }
             public Emails Emails { get; set; }
         }
-
-        public class Emails
-        {
-            public string Preferred { get; set; }
-            public string Account { get; set; }
-            public string Personal { get; set; }
-            public string Business { get; set; }
-        }
-
     }
 }

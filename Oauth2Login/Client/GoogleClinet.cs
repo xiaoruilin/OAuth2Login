@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Oauth2Login.Service;
 
 namespace Oauth2Login.Client
 {
@@ -9,10 +9,10 @@ namespace Oauth2Login.Client
         }
 
         public GoogleClient(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
-                                string oAcceptedUrl, string oFailedUrl, string oProxy)
+            string oAcceptedUrl, string oFailedUrl, string oProxy)
             : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
         {
-            ServiceType = typeof(Oauth2Login.Service.GoogleService);
+            ServiceType = typeof (GoogleService);
         }
 
         public class UserProfile

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using System.Web;
 
 namespace Oauth2Login.Core
 {
     public class RestfullRequest
     {
-        public static string Request(string url, string method, string contentType, NameValueCollection header, string data, string proxyAddress = null)
+        public static string Request(string url, string method, string contentType, NameValueCollection header,
+            string data, string proxyAddress = null)
         {
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+            var request = (HttpWebRequest) WebRequest.Create(url);
             request.Method = method;
             if (!string.IsNullOrEmpty(contentType))
                 request.ContentType = contentType;
@@ -26,7 +25,7 @@ namespace Oauth2Login.Core
 
             if (!string.IsNullOrEmpty(data))
             {
-                using (StreamWriter swt = new StreamWriter(request.GetRequestStream()))
+                using (var swt = new StreamWriter(request.GetRequestStream()))
                 {
                     swt.Write(data);
                 }
@@ -35,7 +34,7 @@ namespace Oauth2Login.Core
             string result = string.Empty;
             using (WebResponse response = request.GetResponse())
             {
-                using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+                using (var sr = new StreamReader(response.GetResponseStream()))
                 {
                     result = sr.ReadToEnd();
                 }

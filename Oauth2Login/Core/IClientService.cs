@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Oauth2Login
 {
@@ -7,7 +6,7 @@ namespace Oauth2Login
     {
         void CreateOAuthClient(IOAuthContext oContext);
         void CreateOAuthClient(AbstractClientProvider oClient);
-        
+
         string BeginAuthentication();
         string RequestToken();
         Dictionary<string, string> RequestUserProfile();

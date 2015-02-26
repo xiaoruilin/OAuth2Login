@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Oauth2Login
+﻿namespace Oauth2Login
 {
     internal class Oauth2Consts
     {

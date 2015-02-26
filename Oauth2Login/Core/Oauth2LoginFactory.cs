@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
+using Oauth2Login.Configuration;
 
 namespace Oauth2Login
 {
     public class Oauth2LoginFactory
     {
-
         public static T CreateClient<T>(string oConfigurationName) where T : AbstractClientProvider, new()
         {
-            Configuration.OAuthConfigurationSection clientConfiguration =
-                      ConfigurationManager.GetSection("oauth2.login.configuration") as Configuration.OAuthConfigurationSection;
+            var clientConfiguration =
+                ConfigurationManager.GetSection("oauth2.login.configuration") as OAuthConfigurationSection;
 
             if (clientConfiguration != null)
             {
@@ -25,22 +22,23 @@ namespace Oauth2Login
 
                 while (configurationReader.MoveNext())
                 {
-                    if (configurationReader.Current is Configuration.OAuthConfigurationElement)
+                    if (configurationReader.Current is OAuthConfigurationElement)
                     {
-                        Configuration.OAuthConfigurationElement clientConfigurationElement =
-                            configurationReader.Current as Configuration.OAuthConfigurationElement;
+                        var clientConfigurationElement =
+                            configurationReader.Current as OAuthConfigurationElement;
 
                         if (oConfigurationName != null)
                         {
                             if (clientConfigurationElement.Name == oConfigurationName)
                             {
-                                T client = (T)Activator.CreateInstance(typeof(T), new object[] {
+                                var client = (T) Activator.CreateInstance(typeof (T), new object[]
+                                {
                                     clientConfigurationElement.ClientId,
                                     clientConfigurationElement.ClientSecret,
                                     clientConfigurationElement.CallbackUrl,
                                     clientConfigurationElement.Scope,
                                     acceptedUrl,
-                                    failedUrl ,
+                                    failedUrl,
                                     clientConfigurationElement.Proxy
                                 });
 
@@ -59,16 +57,18 @@ namespace Oauth2Login
         }
 
         public static T CreateClient<T>(string oClientId, string oClientSecret, string oCallbackUrl, string oScope,
-                                        string oAcceptedUrl, string oFailedUrl, string oProxy) where T : AbstractClientProvider, new()
+            string oAcceptedUrl, string oFailedUrl, string oProxy) where T : AbstractClientProvider, new()
         {
-            T client = (T)Activator.CreateInstance(typeof(T), new object[] { 
-                                                        oClientId,
-                                                        oClientSecret,
-                                                        oCallbackUrl,
-                                                        oScope,
-                                                        oAcceptedUrl,
-                                                        oFailedUrl,
-                                                        oProxy});
+            var client = (T) Activator.CreateInstance(typeof (T), new object[]
+            {
+                oClientId,
+                oClientSecret,
+                oCallbackUrl,
+                oScope,
+                oAcceptedUrl,
+                oFailedUrl,
+                oProxy
+            });
             return client;
         }
     }

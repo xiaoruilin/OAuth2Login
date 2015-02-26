@@ -37,11 +37,11 @@ namespace Oauth2Login.Service
             if (_client != null)
             {
                 _oauthUrl = string.Format("https://accounts.google.com/o/oauth2/auth?" +
-                        "scope={0}&state={1}&redirect_uri={2}&client_id={3}&response_type=code&approval_prompt=auto&access_type=online",
-                        HttpUtility.HtmlEncode(_client.Scope),
-                        "1",
-                        HttpUtility.UrlEncode(_client.CallBackUrl),
-                       HttpUtility.UrlEncode(_client.ClientId));
+                                          "scope={0}&state={1}&redirect_uri={2}&client_id={3}&response_type=code&approval_prompt=auto&access_type=online",
+                    HttpUtility.HtmlEncode(_client.Scope),
+                    "1",
+                    HttpUtility.UrlEncode(_client.CallBackUrl),
+                    HttpUtility.UrlEncode(_client.ClientId));
                 return _oauthUrl;
             }
             throw new Exception("ERROR: [GoogleService] BeginAuth the cleint not found!");
@@ -53,27 +53,32 @@ namespace Oauth2Login.Service
             if (code != null)
             {
                 string tokenUrl = "https://accounts.google.com/o/oauth2/token";
-                string post = string.Format("code={0}&client_id={1}&client_secret={2}&redirect_uri={3}&grant_type=authorization_code",
-                                          code,
-                                          HttpUtility.HtmlEncode(_client.ClientId),
-                                          _client.ClientSecret,
-                                          HttpUtility.HtmlEncode(_client.CallBackUrl));
-                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null, post, _client.Proxy);
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
+                string post =
+                    string.Format(
+                        "code={0}&client_id={1}&client_secret={2}&redirect_uri={3}&grant_type=authorization_code",
+                        code,
+                        HttpUtility.HtmlEncode(_client.ClientId),
+                        _client.ClientSecret,
+                        HttpUtility.HtmlEncode(_client.CallBackUrl));
+                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null,
+                    post, _client.Proxy);
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()
         {
-            string profileUrl = string.Format("https://www.googleapis.com/oauth2/v1/userinfo?access_token={0}", _client.Token);
-            NameValueCollection header = new NameValueCollection();
+            string profileUrl = string.Format("https://www.googleapis.com/oauth2/v1/userinfo?access_token={0}",
+                _client.Token);
+            var header = new NameValueCollection();
             header.Add("Accept-Language", "en_US");
-            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null, _client.Proxy);
+            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null,
+                _client.Proxy);
             _client.ProfileJsonString = result;
             GoogleClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new GoogleClient.UserProfile());
 
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>();
             dictionary.Add("source", "Google");
             dictionary.Add("id", data.Id);
             dictionary.Add("email", data.Email);

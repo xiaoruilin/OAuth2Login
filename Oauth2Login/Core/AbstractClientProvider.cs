@@ -5,6 +5,23 @@ namespace Oauth2Login
 {
     public abstract class AbstractClientProvider
     {
+        protected AbstractClientProvider()
+        {
+        }
+
+        protected AbstractClientProvider(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
+            string oAcceptedUrl, string oFailedUrl, string oProxy)
+        {
+            ClientId = oClientid;
+            ClientSecret = oClientsecret;
+            CallBackUrl = oCallbackUrl;
+            Scope = oScope;
+            AcceptedRedirectUrl = oAcceptedUrl;
+            FailedRedirectUrl = oFailedUrl;
+            Proxy = oProxy;
+            Token = "";
+        }
+
         public Type ServiceType { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
@@ -16,19 +33,5 @@ namespace Oauth2Login
         public string Token { get; set; }
         public Dictionary<string, string> Profile { get; set; }
         public string ProfileJsonString { get; set; }
-
-        protected AbstractClientProvider() { }
-
-        protected AbstractClientProvider(string oClientid, string oClientsecret, string oCallbackUrl, string oScope, string oAcceptedUrl, string oFailedUrl, string oProxy)
-        {
-            ClientId = oClientid;
-            ClientSecret = oClientsecret;
-            CallBackUrl = oCallbackUrl;
-            Scope = oScope;
-            AcceptedRedirectUrl = oAcceptedUrl;
-            FailedRedirectUrl = oFailedUrl;
-            Proxy = oProxy;
-            Token = "";
-        }
     }
 }

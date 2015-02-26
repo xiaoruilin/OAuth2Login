@@ -37,11 +37,11 @@ namespace Oauth2Login.Service
             if (_client != null)
             {
                 _oauthUrl = string.Format("https://login.live.com/oauth20_authorize.srf?" +
-                        "client_id={0}&scope={1}&display=popup&target=self&response_type=code&redirect_uri={2}",
-                        HttpUtility.HtmlEncode(_client.ClientId),
-                        HttpUtility.HtmlEncode(_client.Scope),
-                        HttpUtility.HtmlEncode(_client.CallBackUrl)
-                        );
+                                          "client_id={0}&scope={1}&display=popup&target=self&response_type=code&redirect_uri={2}",
+                    HttpUtility.HtmlEncode(_client.ClientId),
+                    HttpUtility.HtmlEncode(_client.Scope),
+                    HttpUtility.HtmlEncode(_client.CallBackUrl)
+                    );
                 return _oauthUrl;
             }
             throw new Exception("ERROR: windows live BeginAuth the cleint not found!");
@@ -53,13 +53,16 @@ namespace Oauth2Login.Service
             if (code != null)
             {
                 string tokenUrl = string.Format("https://login.live.com/oauth20_token.srf");
-                string post = string.Format("client_id={0}&redirect_uri={1}&target=self&client_secret={2}&code={3}&grant_type=authorization_code",
-                                            HttpUtility.HtmlEncode(_client.ClientId),
-                                            HttpUtility.HtmlEncode(_client.CallBackUrl),
-                                            _client.ClientSecret,
-                                            code);
-                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null, post, _client.Proxy);
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
+                string post =
+                    string.Format(
+                        "client_id={0}&redirect_uri={1}&target=self&client_secret={2}&code={3}&grant_type=authorization_code",
+                        HttpUtility.HtmlEncode(_client.ClientId),
+                        HttpUtility.HtmlEncode(_client.CallBackUrl),
+                        _client.ClientSecret,
+                        code);
+                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null,
+                    post, _client.Proxy);
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
@@ -67,13 +70,14 @@ namespace Oauth2Login.Service
         public Dictionary<string, string> RequestUserProfile()
         {
             string profileUrl = string.Format("https://apis.live.net/v5.0/me?access_token={0}", _client.Token);
-            NameValueCollection header = new NameValueCollection();
+            var header = new NameValueCollection();
             header.Add("Accept-Language", "en_US");
             string result = RestfullRequest.Request(profileUrl, "GET", null, header, null, _client.Proxy);
             _client.ProfileJsonString = result;
-            WindowsLiveClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new WindowsLiveClient.UserProfile());
+            WindowsLiveClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result,
+                new WindowsLiveClient.UserProfile());
 
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>();
             dictionary.Add("source", "WindowsLive");
             dictionary.Add("id", data.Id);
             dictionary.Add("name", data.Name);

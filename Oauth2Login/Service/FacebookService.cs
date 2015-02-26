@@ -38,14 +38,14 @@ namespace Oauth2Login.Service
             if (_client != null)
             {
                 _oauthUrl = string.Format("https://www.facebook.com/dialog/oauth?" +
-                                "client_id={0}&redirect_uri={1}&scope={2}&state={3}&display=popup",
-                                _client.ClientId,
-                                HttpUtility.HtmlEncode(_client.CallBackUrl),
-                                _client.Scope,
-                                "");
+                                          "client_id={0}&redirect_uri={1}&scope={2}&state={3}&display=popup",
+                    _client.ClientId,
+                    HttpUtility.HtmlEncode(_client.CallBackUrl),
+                    _client.Scope,
+                    "");
                 return _oauthUrl;
             }
-            throw new Exception("ERROR: BeginAuth the cleint not found!");
+            throw new Exception("ERROR: BeginAuth the client not found!");
         }
 
         public string RequestToken()
@@ -55,14 +55,14 @@ namespace Oauth2Login.Service
             {
                 string tokenUrl = string.Format("https://graph.facebook.com/oauth/access_token?");
                 string post = string.Format("client_id={0}&redirect_uri={1}&client_secret={2}&code={3}",
-                                            _client.ClientId,
-                                            HttpUtility.HtmlEncode(_client.CallBackUrl),
-                                            _client.ClientSecret,
-                                            code);
+                    _client.ClientId,
+                    HttpUtility.HtmlEncode(_client.CallBackUrl),
+                    _client.ClientSecret,
+                    code);
                 string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded",
-                                                                                        null, post, _client.Proxy);
+                    null, post, _client.Proxy);
                 resonseJson = "{\"" + resonseJson.Replace("=", "\":\"").Replace("&", "\",\"") + "\"}";
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
@@ -70,13 +70,15 @@ namespace Oauth2Login.Service
         public Dictionary<string, string> RequestUserProfile()
         {
             string profileUrl = string.Format("https://graph.facebook.com/me?access_token={0}", _client.Token);
-            NameValueCollection header = new NameValueCollection();
+            var header = new NameValueCollection();
             header.Add("Accept-Language", "en-US");
-            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null, _client.Proxy);
+            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null,
+                _client.Proxy);
             _client.ProfileJsonString = result;
-            FacebookClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new FacebookClient.UserProfile());
+            FacebookClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result,
+                new FacebookClient.UserProfile());
 
-            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            var dictionary = new Dictionary<string, string>();
             dictionary.Add("source", "Facebook");
             dictionary.Add("id", data.Id);
             dictionary.Add("name", data.Name);

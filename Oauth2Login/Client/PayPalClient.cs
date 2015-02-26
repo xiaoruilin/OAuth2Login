@@ -1,4 +1,5 @@
 ﻿using System;
+using Oauth2Login.Service;
 
 namespace Oauth2Login.Client
 {
@@ -9,12 +10,21 @@ namespace Oauth2Login.Client
         }
 
         public PayPalClient(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
-                                string oAcceptedUrl, string oFailedUrl, string oProxy)
+            string oAcceptedUrl, string oFailedUrl, string oProxy)
             : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
         {
-            ServiceType = typeof(Oauth2Login.Service.PayPalService);
+            ServiceType = typeof (PayPalService);
         }
 
+
+        public class Address
+        {
+            public int Postal_code { get; set; }
+            public string Locality { get; set; }
+            public string Region { get; set; }
+            public string Country { get; set; }
+            public string Street_address { get; set; }
+        }
 
         public class UserProfile
         {
@@ -32,15 +42,6 @@ namespace Oauth2Login.Client
             public string Verified_email { get; set; }
             public string Gender { get; set; }
             public string Picture { get; set; }
-        }
-
-        public class Address
-        {
-            public int Postal_code { get; set; }
-            public string Locality { get; set; }
-            public string Region { get; set; }
-            public string Country { get; set; }
-            public string Street_address { get; set; }
         }
     }
 }
