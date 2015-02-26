@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipleOauth2Mvc", "MultipleOauth2Mvc\MultipleOauth2Mvc.csproj", "{16394330-4EB5-457C-A18A-31BECEE7375D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oauth2Login", "Oauth2Login\Oauth2Login.csproj", "{CB07D752-1BBA-462B-A19D-8A5B21846AFD}"
