@@ -2,17 +2,17 @@
 
 namespace Oauth2Login.Client
 {
-    public class GoogleClinet : AbstractClientProvider
+    public class GoogleClient : AbstractClientProvider
     {
-         public GoogleClinet()
+        public GoogleClient()
         {
         }
 
-         public GoogleClinet(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
-                                 string oAcceptedUrl, string oFailedUrl, string oProxy)
+        public GoogleClient(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
+                                string oAcceptedUrl, string oFailedUrl, string oProxy)
             : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
         {
-            ServiceType = typeof (Oauth2Login.Service.GoogleService);
+            ServiceType = typeof(Oauth2Login.Service.GoogleService);
         }
 
         public class UserProfile

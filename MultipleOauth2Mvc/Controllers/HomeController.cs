@@ -11,7 +11,6 @@ namespace MultipleOauth2Mvc.Controllers
 {
     public class HomeController : Controller
     {
-
         private static Oauth2LoginContext _context;
 
         public ActionResult Index()
@@ -28,7 +27,7 @@ namespace MultipleOauth2Mvc.Controllers
                 switch (id.ToLower())
                 {
                     case "google":
-                        client = Oauth2LoginFactory.CreateClient<GoogleClinet>("Google");
+                        client = Oauth2LoginFactory.CreateClient<GoogleClient>("Google");
                         break;
                     case "facebook":
                         client = Oauth2LoginFactory.CreateClient<FacebookClient>("Facebook");

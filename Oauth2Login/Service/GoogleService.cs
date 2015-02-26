@@ -71,7 +71,7 @@ namespace Oauth2Login.Service
             header.Add("Accept-Language", "en_US");
             string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null, _client.Proxy);
             _client.ProfileJsonString = result;
-            GoogleClinet.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new GoogleClinet.UserProfile());
+            GoogleClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new GoogleClient.UserProfile());
 
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
             dictionary.Add("source", "Google");
