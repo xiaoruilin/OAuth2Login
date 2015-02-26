@@ -59,12 +59,12 @@ namespace Oauth2Login.Service
                                             HttpUtility.HtmlEncode(_client.CallBackUrl),
                                             _client.ClientSecret,
                                             code);
-                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", 
+                string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded",
                                                                                         null, post, _client.Proxy);
                 resonseJson = "{\"" + resonseJson.Replace("=", "\":\"").Replace("&", "\",\"") + "\"}";
                 return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
-            return "access_denied";
+            return Oauth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()
@@ -72,7 +72,7 @@ namespace Oauth2Login.Service
             string profileUrl = string.Format("https://graph.facebook.com/me?access_token={0}", _client.Token);
             NameValueCollection header = new NameValueCollection();
             header.Add("Accept-Language", "en-US");
-            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header,null, _client.Proxy);
+            string result = RestfullRequest.Request(profileUrl, "GET", "application/x-www-form-urlencoded", header, null, _client.Proxy);
             _client.ProfileJsonString = result;
             FacebookClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new FacebookClient.UserProfile());
 

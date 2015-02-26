@@ -71,19 +71,19 @@ namespace Oauth2Login.Service
                                     code,
                                     _client.ClientId,
                                     _client.ClientSecret);
-                string resonseJson = RestfullRequest.Request(oauthUrl, 
-                                                                                        "POST", 
-                                                                                        "application/x-www-form-urlencoded", 
-                                                                                        null, 
+                string resonseJson = RestfullRequest.Request(oauthUrl,
+                                                                                        "POST",
+                                                                                        "application/x-www-form-urlencoded",
+                                                                                        null,
                                                                                         post,
                                                                                         _client.Proxy);
-              return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
+                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
-            return "access_denied";
+            return Oauth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()
-        {           
+        {
             string profileUrl = string.Format(OAUTH_API_URL + "/v1/identity/openidconnect/userinfo/?schema=openid");
             NameValueCollection header = new NameValueCollection();
             header.Add("Accept-Language", "en_US");

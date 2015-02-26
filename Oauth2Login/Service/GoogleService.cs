@@ -61,7 +61,7 @@ namespace Oauth2Login.Service
                 string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null, post, _client.Proxy);
                 return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
-            return "access_denied";
+            return Oauth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()

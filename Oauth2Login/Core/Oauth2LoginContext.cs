@@ -8,8 +8,6 @@ namespace Oauth2Login
 {
     public class Oauth2LoginContext : IOAuthContext
     {
-        public const string ACCESS_DENIED = "access_denied";
-
         private const string _sessionKey = "Oauth2LoginContext";
         private const string _cookieKey = "Oauth2LoginCookie";
 
@@ -31,7 +29,7 @@ namespace Oauth2Login
         {
             // client token
             var tokenResult = Service.RequestToken();
-            if (tokenResult == ACCESS_DENIED)
+            if (tokenResult == Oauth2Consts.ACCESS_DENIED)
                 return Client.FailedRedirectUrl;
             else
                 Client.Token = tokenResult;

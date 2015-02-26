@@ -61,17 +61,16 @@ namespace Oauth2Login.Service
                 string resonseJson = RestfullRequest.Request(tokenUrl, "POST", "application/x-www-form-urlencoded", null, post, _client.Proxy);
                 return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
             }
-            return "access_denied";
+            return Oauth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()
         {
-           
             string profileUrl = string.Format("https://apis.live.net/v5.0/me?access_token={0}", _client.Token);
             NameValueCollection header = new NameValueCollection();
             header.Add("Accept-Language", "en_US");
-            string result = RestfullRequest.Request(profileUrl, "GET",null, header, null, _client.Proxy);
-           _client.ProfileJsonString = result;
+            string result = RestfullRequest.Request(profileUrl, "GET", null, header, null, _client.Proxy);
+            _client.ProfileJsonString = result;
             WindowsLiveClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new WindowsLiveClient.UserProfile());
 
             Dictionary<string, string> dictionary = new Dictionary<string, string>();
