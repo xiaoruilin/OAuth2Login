@@ -98,6 +98,12 @@ namespace MultipleOauth2Mvc.Controllers
         {
             try
             {
+                var redirectUrl = _context.ValidateLogin();
+                if (redirectUrl != null)
+                {
+                    return Redirect(redirectUrl);
+                }
+
                 var token = _context.Token;
                 var result = _context.Profile;
                 var strResult =_context.Client.ProfileJsonString;

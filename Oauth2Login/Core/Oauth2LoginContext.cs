@@ -8,6 +8,8 @@ namespace Oauth2Login
 {
     public class Oauth2LoginContext : IOAuthContext
     {
+        public const string ACCESS_DENIED = "access_denied";
+
         private const string _sessionKey = "Oauth2LoginContext";
         private const string _cookieKey = "Oauth2LoginCookie";
 
@@ -16,23 +18,32 @@ namespace Oauth2Login
 
         public string Token
         {
-            get
-            {
-                if (string.IsNullOrEmpty(Client.Token))
-                    RequestToken();
-                return Client.Token;
-            }
+            get { return Client.Token; }
             set { Client.Token = value; }
         }
         public Dictionary<string, string> Profile
         {
-            get
-            {
-                if (Client.Profile == null)
-                    RequestProfile();
-                return Client.Profile;
-            }
+            get { return Client.Profile; }
             set { Client.Profile = value; }
+        }
+
+        public string ValidateLogin()
+        {
+            // client token
+            var tokenResult = Service.RequestToken();
+            if (tokenResult == ACCESS_DENIED)
+                return Client.FailedRedirectUrl;
+            else
+                Client.Token = tokenResult;
+
+            // client profile
+            Dictionary<string, string> result = Service.RequestUserProfile();
+            if (result != null)
+                Client.Profile = result;
+            else
+                throw new Exception("ERROR: [Oauth2LoginContext] Profile is not found!");
+
+            return null;
         }
 
         public Oauth2LoginContext()
@@ -66,31 +77,6 @@ namespace Oauth2Login
         public string BeginAuth()
         {
             return Service.BeginAuthentication();
-        }
-
-        /// <summary>
-        /// 获取token
-        /// </summary>
-        private void RequestToken()
-        {
-            string result = Service.RequestToken();
-            if (result != "access_denied")
-                Client.Token = result;
-            else
-                HttpContext.Current.Response.Redirect(Client.FailedRedirectUrl);
-
-        }
-
-        /// <summary>
-        /// 获取用户信息
-        /// </summary>
-        private void RequestProfile()
-        {
-            Dictionary<string, string> result = Service.RequestUserProfile();
-            if (result != null)
-                Client.Profile = result;
-            else
-                throw new Exception("ERROR: [Oauth2LoginContext] Profile is not found!");
         }
 
         public static Oauth2LoginContext Current
@@ -148,6 +134,5 @@ namespace Oauth2Login
                 return context;
             }
         }
-
     }
 }
