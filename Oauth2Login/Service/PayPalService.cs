@@ -13,17 +13,13 @@ namespace Oauth2Login.Service
         private static string _oauthUrl = "";
         private AbstractClientProvider _client;
 
-#if DEBUG
         private const string OAUTH_API_URL = "https://api.sandbox.paypal.com";
-#else
-        private const string OAUTH_API_URL = "https://api.paypal.com"; 
-#endif
+        //private const string OAUTH_API_URL = "https://api.paypal.com"; 
 
-#if DEBUG
+
         private const string OAUTH_API_LOGIN_URL = "https://www.sandbox.paypal.com";
-#else
-        private const string OAUTH_API_LOGIN_URL = "https://www.paypal.com"; 
-#endif
+        //private const string OAUTH_API_LOGIN_URL = "https://www.paypal.com"; 
+
 
         public PayPalService()
         {
