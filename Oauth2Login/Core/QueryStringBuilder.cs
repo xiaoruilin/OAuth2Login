@@ -22,9 +22,9 @@ namespace Oauth2Login.Core
                 var key = keyValueEntries[i];
                 var val = keyValueEntries[i + 1];
 
-                var valEncoded = val.ToString();
-                if (!dontEncode.Contains(key))
-                    valEncoded = HttpUtility.UrlEncode(valEncoded);
+                var valEncoded = HttpUtility.UrlEncode(val.ToString());
+                if (dontEncode != null && dontEncode.Contains(key))
+                    valEncoded = val.ToString();
 
                 sb.AppendFormat("{0}={1}&", key, valEncoded);
             }
