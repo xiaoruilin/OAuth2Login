@@ -17,7 +17,7 @@ namespace Oauth2Login.Service
         {
             if (_client != null)
             {
-                var qstring = QueryStringBuilder.Build(
+                var qstring = QueryStringBuilder.BuildCompex(new[] { "scope" },
                     "scope", _client.Scope,
                     "state", "1",
                     "redirect_uri", _client.CallBackUrl,
