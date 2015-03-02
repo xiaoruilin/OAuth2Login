@@ -154,7 +154,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\AuthExternal\Callback.cshtml" />
+    <Content Include="Views\AuthExternal\Success.cshtml" />
     <Content Include="Views\AuthExternal\LoginFail.cshtml" />
     <Content Include="Views\AuthExternal\LoginSuccess.cshtml" />
   </ItemGroup>

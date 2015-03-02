@@ -29,7 +29,7 @@ namespace MultipleOauth2Mvc.Controllers
             }
         }
 
-        public ActionResult Callback(string id)
+        public ActionResult Success(string id)
         {
             var client = AbstractClientProvider.ClientById(id);
 
