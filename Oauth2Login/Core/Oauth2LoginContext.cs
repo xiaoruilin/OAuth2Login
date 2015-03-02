@@ -118,7 +118,7 @@ namespace Oauth2Login.Core
         {
             // client token
             string tokenResult = Service.RequestToken();
-            if (tokenResult == Oauth2Consts.ACCESS_DENIED)
+            if (tokenResult == OAuth2Consts.ACCESS_DENIED)
                 return Client.FailedRedirectUrl;
             Client.Token = tokenResult;
 

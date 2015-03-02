@@ -54,7 +54,7 @@ namespace Oauth2Login.Service
                 var responseJson = HttpPost(oauthUrl, postData);
                 return JsonConvert.DeserializeAnonymousType(responseJson, new { access_token = "" }).access_token;
             }
-            return Oauth2Consts.ACCESS_DENIED;
+            return OAuth2Consts.ACCESS_DENIED;
         }
 
         public override Dictionary<string, string> RequestUserProfile()

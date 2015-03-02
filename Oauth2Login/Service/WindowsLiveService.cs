@@ -64,7 +64,7 @@ namespace Oauth2Login.Service
                     post, _client.Proxy);
                 return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
             }
-            return Oauth2Consts.ACCESS_DENIED;
+            return OAuth2Consts.ACCESS_DENIED;
         }
 
         public Dictionary<string, string> RequestUserProfile()
