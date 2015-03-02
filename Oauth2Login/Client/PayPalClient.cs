@@ -14,7 +14,7 @@ namespace Oauth2Login.Client
             string oAcceptedUrl, string oFailedUrl, string oProxy)
             : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
         {
-            ServiceType = typeof (PayPalService);
+            //ServiceType = typeof (PayPalService);
         }
 
 

@@ -23,7 +23,6 @@ namespace Oauth2Login.Core
             Token = "";
         }
 
-        public Type ServiceType { get; set; }
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string CallBackUrl { get; set; }
@@ -32,30 +31,8 @@ namespace Oauth2Login.Core
         public string FailedRedirectUrl { get; set; }
         public string Proxy { get; set; }
         public string Token { get; set; }
+        
         public Dictionary<string, string> Profile { get; set; }
         public string ProfileJsonString { get; set; }
-
-        public static AbstractClientProvider ClientById(string id)
-        {
-            switch (id.ToLower())
-            {
-                case "google":
-                    return Oauth2LoginFactory.CreateClient<GoogleClient>("Google");
-                    break;
-                case "facebook":
-                    return Oauth2LoginFactory.CreateClient<FacebookClient>("Facebook");
-                    break;
-                case "windowslive":
-                    return Oauth2LoginFactory.CreateClient<WindowsLiveClient>("WindowsLive");
-                    break;
-                case "paypal":
-                    return Oauth2LoginFactory.CreateClient<PayPalClient>("PayPal");
-                    break;
-                case "twitter":
-                    return Oauth2LoginFactory.CreateClient<TwitterClient>("Twitter");
-                default:
-                    return null;
-            }
-        }
     }
 }

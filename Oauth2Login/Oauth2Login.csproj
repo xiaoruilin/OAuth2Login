@@ -57,7 +57,6 @@
     <Compile Include="Configuration\OAuthWebConfigurationElement.cs" />
     <Compile Include="Core\IClientService.cs" />
     <Compile Include="Core\IOAuthContext.cs" />
-    <Compile Include="Core\Oauth2LoginContext.cs" />
     <Compile Include="Core\Oauth2LoginFactory.cs" />
     <Compile Include="Core\QueryStringBuilder.cs" />
     <Compile Include="Core\RestfullRequest.cs" />

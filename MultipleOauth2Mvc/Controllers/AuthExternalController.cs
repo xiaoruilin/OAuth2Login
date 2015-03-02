@@ -4,22 +4,19 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Oauth2Login.Core;
+using Oauth2Login.Service;
 
 namespace MultipleOauth2Mvc.Controllers
 {
     public class AuthExternalController : Controller
     {
-        // TODO: REFACTOR THIS - static reference is bad - it'll only work for one login session at the time
-        private static Oauth2LoginContext _context;
         public ActionResult Login(string id)
         {
-            var client = AbstractClientProvider.ClientById(id);
+            var service = BaseOauth2Service.GetService(id);
 
-            if (client != null)
+            if (service != null)
             {
-                //var context = Oauth2LoginContext.Create(client);
-                _context = Oauth2LoginContext.Create(client);
-                var url = _context.BeginAuth();
+                var url = service.BeginAuthentication();
 
                 return Redirect(url);
             }
@@ -31,23 +28,22 @@ namespace MultipleOauth2Mvc.Controllers
 
         public ActionResult Success(string id)
         {
-            var client = AbstractClientProvider.ClientById(id);
+            var service = BaseOauth2Service.GetService(id);
 
-            if (client != null)
+            if (service != null)
             {
                 try
                 {
-                    //var context = Oauth2LoginContext.Create(client);
-
-                    var redirectUrl = _context.ValidateLogin();
+                    var redirectUrl = service.ValidateLogin();
                     if (redirectUrl != null)
                     {
                         return Redirect(redirectUrl);
                     }
 
-                    var token = _context.Token;
-                    var result = _context.Profile;
-                    var strResult = _context.Client.ProfileJsonString;
+                    // data in service._client now... think on how to expose it
+                    //var token = _context.Token;
+                    //var result = _context.Profile;
+                    //var strResult = _context.Client.ProfileJsonString;
 
                     return View(new AuthCallbackResult
                     {
