@@ -26,7 +26,9 @@ namespace Oauth2Login.Service
             string timeStamp = util.GetTimeStamp();
 
             var qstring = QueryStringBuilder.Build(
-                "oauth_callback", _client.CallBackUrl,
+// Twitter relies on Callback URL setting on http://apps.twitter.com/
+// If you set client callback here it'll return 401
+//                "oauth_callback", _client.CallBackUrl,
                 "oauth_consumer_key", _client.ClientId,
                 "oauth_nonce", nonce,
                 "oauth_signature_method", "HMAC-SHA1",
