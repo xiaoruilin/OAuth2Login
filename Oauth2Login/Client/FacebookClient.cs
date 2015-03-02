@@ -1,4 +1,5 @@
-﻿using Oauth2Login.Service;
+﻿using Oauth2Login.Core;
+using Oauth2Login.Service;
 
 namespace Oauth2Login.Client
 {

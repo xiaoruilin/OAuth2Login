@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Oauth2Login
+namespace Oauth2Login.Core
 {
     public abstract class AbstractClientProvider
     {

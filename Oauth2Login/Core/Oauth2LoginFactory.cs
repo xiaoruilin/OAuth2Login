@@ -3,7 +3,7 @@ using System.Collections;
 using System.Configuration;
 using Oauth2Login.Configuration;
 
-namespace Oauth2Login
+namespace Oauth2Login.Core
 {
     public class Oauth2LoginFactory
     {

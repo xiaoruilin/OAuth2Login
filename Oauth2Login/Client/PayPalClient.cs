@@ -1,4 +1,5 @@
 ﻿using System;
+using Oauth2Login.Core;
 using Oauth2Login.Service;
 
 namespace Oauth2Login.Client

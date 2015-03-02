@@ -5,7 +5,7 @@ using System.Configuration;
 using System.Web;
 using Oauth2Login.Configuration;
 
-namespace Oauth2Login
+namespace Oauth2Login.Core
 {
     public class Oauth2LoginContext : IOAuthContext
     {
