@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Newtonsoft.Json;
 using Oauth2Login;
 using Oauth2Login.Client;
+using Oauth2Login.Core;
 
 namespace MultipleOauth2Mvc.Controllers
 {
@@ -93,7 +94,7 @@ namespace MultipleOauth2Mvc.Controllers
             #endregion
         }
 
-        public ActionResult Succes(/*string email = "", */string bindpage = "")
+        public ActionResult Success(/*string email = "", */string bindpage = "")
         {
             try
             {
