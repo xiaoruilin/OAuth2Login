@@ -10,12 +10,6 @@ namespace Oauth2Login.Configuration
             get { return base["name"].ToString(); }
         }
 
-        [ConfigurationProperty("type", IsRequired = true)]
-        public string Type
-        {
-            get { return base["type"].ToString(); }
-        }
-
         [ConfigurationProperty("clientid", IsRequired = true)]
         public string ClientId
         {
@@ -34,16 +28,10 @@ namespace Oauth2Login.Configuration
             get { return base["callbackUrl"].ToString(); }
         }
 
-        [ConfigurationProperty("scope", IsRequired = true)]
+        [ConfigurationProperty("scope", IsRequired = false)]
         public string Scope
         {
             get { return base["scope"].ToString(); }
-        }
-
-        [ConfigurationProperty("proxy", IsRequired = false)]
-        public string Proxy
-        {
-            get { return base["proxy"].ToString(); }
         }
     }
 }

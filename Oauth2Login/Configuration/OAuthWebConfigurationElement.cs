@@ -15,5 +15,11 @@ namespace Oauth2Login.Configuration
         {
             get { return base["failedRedirectUrl"].ToString(); }
         }
+
+        [ConfigurationProperty("proxy", IsRequired = false)]
+        public string Proxy
+        {
+            get { return base["proxy"].ToString(); }
+        }
     }
 }

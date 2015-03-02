@@ -9,16 +9,14 @@ namespace Oauth2Login.Core
     {
         public static T CreateClient<T>(string oConfigurationName) where T : AbstractClientProvider, new()
         {
-            var clientConfiguration =
+            var ccRoot =
                 ConfigurationManager.GetSection("oauth2.login.configuration") as OAuthConfigurationSection;
 
-            if (clientConfiguration != null)
+            if (ccRoot != null)
             {
-                string acceptedUrl = clientConfiguration.WebConfiguration.AcceptedRedirectUrl;
-                string failedUrl = clientConfiguration.WebConfiguration.FailedRedirectUrl;
+                var ccWebElem = ccRoot.WebConfiguration;
 
-
-                IEnumerator configurationReader = clientConfiguration.OAuthVClientConfigurations.GetEnumerator();
+                IEnumerator configurationReader = ccRoot.OAuthVClientConfigurations.GetEnumerator();
 
                 while (configurationReader.MoveNext())
                 {
@@ -37,9 +35,9 @@ namespace Oauth2Login.Core
                                     clientConfigurationElement.ClientSecret,
                                     clientConfigurationElement.CallbackUrl,
                                     clientConfigurationElement.Scope,
-                                    acceptedUrl,
-                                    failedUrl,
-                                    clientConfigurationElement.Proxy
+                                    ccWebElem.AcceptedRedirectUrl,
+                                    ccWebElem.FailedRedirectUrl,
+                                    ccWebElem.Proxy
                                 });
 
                                 return client;
@@ -56,20 +54,20 @@ namespace Oauth2Login.Core
             return default(T);
         }
 
-        public static T CreateClient<T>(string oClientId, string oClientSecret, string oCallbackUrl, string oScope,
-            string oAcceptedUrl, string oFailedUrl, string oProxy) where T : AbstractClientProvider, new()
-        {
-            var client = (T) Activator.CreateInstance(typeof (T), new object[]
-            {
-                oClientId,
-                oClientSecret,
-                oCallbackUrl,
-                oScope,
-                oAcceptedUrl,
-                oFailedUrl,
-                oProxy
-            });
-            return client;
-        }
+        //public static T CreateClient<T>(string oClientId, string oClientSecret, string oCallbackUrl, string oScope,
+        //    string oAcceptedUrl, string oFailedUrl, string oProxy) where T : AbstractClientProvider, new()
+        //{
+        //    var client = (T) Activator.CreateInstance(typeof (T), new object[]
+        //    {
+        //        oClientId,
+        //        oClientSecret,
+        //        oCallbackUrl,
+        //        oScope,
+        //        oAcceptedUrl,
+        //        oFailedUrl,
+        //        oProxy
+        //    });
+        //    return client;
+        //}
     }
 }
