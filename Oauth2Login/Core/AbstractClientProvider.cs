@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Oauth2Login.Client;
 
 namespace Oauth2Login.Core
 {
@@ -33,5 +34,28 @@ namespace Oauth2Login.Core
         public string Token { get; set; }
         public Dictionary<string, string> Profile { get; set; }
         public string ProfileJsonString { get; set; }
+
+        public static AbstractClientProvider ClientById(string id)
+        {
+            switch (id.ToLower())
+            {
+                case "google":
+                    return Oauth2LoginFactory.CreateClient<GoogleClient>("Google");
+                    break;
+                case "facebook":
+                    return Oauth2LoginFactory.CreateClient<FacebookClient>("Facebook");
+                    break;
+                case "windowslive":
+                    return Oauth2LoginFactory.CreateClient<WindowsLiveClient>("WindowsLive");
+                    break;
+                case "paypal":
+                    return Oauth2LoginFactory.CreateClient<PayPalClient>("PayPal");
+                    break;
+                case "twitter":
+                    return Oauth2LoginFactory.CreateClient<TwitterClient>("Twitter");
+                default:
+                    return null;
+            }
+        }
     }
 }

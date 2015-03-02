@@ -72,6 +72,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\AuthExternalController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -139,13 +140,7 @@
     <Folder Include="Images\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Home\Error.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Home\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\Twitter.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Oauth2Login\Oauth2Login.csproj">
@@ -157,6 +152,11 @@
     <Content Include="Web.Oauth.config">
       <SubType>Designer</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\AuthExternal\Callback.cshtml" />
+    <Content Include="Views\AuthExternal\LoginFail.cshtml" />
+    <Content Include="Views\AuthExternal\LoginSuccess.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

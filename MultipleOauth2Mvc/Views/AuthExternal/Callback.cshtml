@@ -1,0 +1,22 @@
+﻿@model MultipleOauth2Mvc.Controllers.AuthCallbackResult
+
+
+@if (!String.IsNullOrEmpty(Model.RedirectUrl))
+{
+    <div>
+        <h1>Return</h1>
+
+        <script>
+            top.window.opener.location = '@Model.RedirectUrl';
+            window.close();
+        </script>
+    </div>
+}
+else
+{
+    <div>
+        <h1>Login Failed</h1>
+        
+        <div>@Model.ErrorText</div>
+    </div>
+}

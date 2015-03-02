@@ -2,43 +2,37 @@
     ViewBag.Title = "Sign in with test page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<h2>
-    Login</h2>
-<input type="button" name="WindowsLive" value="windows live" class="alo" /><br />
-<input type="button" name="Google" value="Google" class="alo" /><br />
-<input type="button" name="Facebook" value="Facebook" class="alo" /><br />
-<input type="button" name="PayPal" value="PayPal" class="alo" /><br />
+<h2>Login</h2>
+<input type="button" value="Facebook" onclick="facebookAuth()" />
+<input type="button" value="Twitter" onclick="twitterAuth()" />
+<input type="button" value="Google" onclick="googleAuth()" />
+<input type="button" value="PayPal" onclick="paypalAuth()" />
+<input type="button" value="Windows Live" onclick="windowLive()" />
 <br />
 <script type="text/javascript">
-    $(document).ready(function () {
-        $(".alo").live('click', function () {
-            var loginType = $(this).attr("name");
-            var fbHeight = /facebook/ig.test(loginType) ? 340 : 520;
-            fbHeight = /paypal/ig.test(loginType) ? 550 : fbHeight;
-            var w = /paypal/ig.test(loginType) ? 400 : 680;
-            if (loginType) {
-                $.ajax({
-                    type: "POST",
-                    url: "/home/login/" + loginType, // + "?bindpage=1"
-                    dataType: 'json',
-                    success: function (d) {
-                        if (d && d.Url) {
-                            openwindow(d.Url, "", w, fbHeight);
-                        }
-                    }
-                });
-            }
-            return false;
-        });
-    });
+    function facebookAuth() {
+        openWindow("/AuthExternal/Login/Facebook", "", 680, 340);
+    };
 
-    function openwindow(url, name, iWidth, iHeight) {
+    function twitterAuth() {
+        openWindow("/AuthExternal/Login/Twitter", "", 750, 520);
+    };
+
+    function googleAuth() {
+        openWindow("/AuthExternal/Login/Google", "", 680, 520);
+    };
+
+    function paypalAuth() {
+        openWindow("/AuthExternal/Login/PayPal", "", 400, 550);
+    };
+
+    function windowLive() {
+        openWindow("/AuthExternal/Login/WindowsLive", "", 400, 550);
+    };
+
+    function openWindow(url, name, iWidth, iHeight) {
         var iTop = (window.screen.availHeight - 30 - iHeight) / 2;
         var iLeft = (window.screen.availWidth - 10 - iWidth) / 2;
         window.open(url, name, 'height=' + iHeight + ',innerHeight=' + iHeight + ',width=' + iWidth + ',innerWidth=' + iWidth + ',top=' + iTop + ',left=' + iLeft + ',toolbar=no,menubar=no,scrollbars=yes,resizeable=no,location=no,status=no');
-    }
-
-    function abc(data) {
-        console.info(data);
     }
 </script>
