@@ -8,98 +8,80 @@ using Oauth2Login.Core;
 
 namespace Oauth2Login.Service
 {
-    public class PayPalService : IClientService
+    public class PayPalService : BaseOauth2Service
     {
         private static string _oauthUrl = "";
-        private AbstractClientProvider _client;
 
         private const string OAUTH_API_URL = "https://api.sandbox.paypal.com";
         //private const string OAUTH_API_URL = "https://api.paypal.com"; 
 
-
         private const string OAUTH_API_LOGIN_URL = "https://www.sandbox.paypal.com";
         //private const string OAUTH_API_LOGIN_URL = "https://www.paypal.com"; 
 
+        public PayPalService(AbstractClientProvider oClient) : base(oClient) { }
 
-        public PayPalService()
-        {
-        }
-
-        public PayPalService(AbstractClientProvider oCleint)
-        {
-            _client = oCleint;
-        }
-
-        public void CreateOAuthClient(IOAuthContext oContext)
-        {
-            _client = oContext.Client;
-        }
-
-        public void CreateOAuthClient(AbstractClientProvider oClient)
-        {
-            _client = oClient;
-        }
-
-        public string BeginAuthentication()
+        public override string BeginAuthentication()
         {
             if (_client != null)
             {
-                _oauthUrl = string.Format(OAUTH_API_LOGIN_URL + "/webapps/auth/protocol/openidconnect/v1/authorize?" +
-                                          "client_id={0}&response_type=code&redirect_uri={1}&scope={2}",
-                    _client.ClientId,
-                    HttpUtility.HtmlEncode(_client.CallBackUrl),
-                    _client.Scope,
-                    "");
+                var qstring = QueryStringBuilder.Build(
+                    "client_id", _client.ClientId,
+                    "response_type", "code",
+                    "redirect_uri", _client.CallBackUrl,
+                    "scope", _client.Scope
+                    );
+
+                _oauthUrl = OAUTH_API_LOGIN_URL + "/webapps/auth/protocol/openidconnect/v1/authorize?" + qstring;
+                                          
                 return _oauthUrl;
             }
-            throw new Exception("ERROR: BeginAuth the cleint not found!");
+            throw new Exception("ERROR: BeginAuth the client not found!");
         }
 
-        public string RequestToken()
+        public override string RequestToken()
         {
             string code = HttpContext.Current.Request.Params["code"];
             if (code != null)
             {
-                string oauthUrl = OAUTH_API_URL + "/v1/identity/openidconnect/tokenservice";
-                //string oAuthCredentials = Convert.ToBase64String(Encoding.Default.GetBytes(_client.ClientId + ":" + _client.ClientSecret));
-                string post =
-                    string.Format(
-                        "grant_type=authorization_code&redirect_uri={0}&code={1}&client_id={2}&client_secret={3}",
-                        HttpUtility.HtmlEncode(_client.CallBackUrl),
-                        code,
-                        _client.ClientId,
-                        _client.ClientSecret);
-                string resonseJson = RestfullRequest.Request(oauthUrl,
-                    "POST",
-                    "application/x-www-form-urlencoded",
-                    null,
-                    post,
-                    _client.Proxy);
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new {access_token = ""}).access_token;
+                const string oauthUrl = OAUTH_API_URL + "/v1/identity/openidconnect/tokenservice";
+                var postData = QueryStringBuilder.Build(
+                    "grant_type", "authorization_code",
+                    "redirect_uri", _client.CallBackUrl,
+                    "code", code,
+                    "client_id", _client.ClientId,
+                    "client_secret", _client.ClientSecret
+                    );
+                var responseJson = HttpPost(oauthUrl, postData);
+                return JsonConvert.DeserializeAnonymousType(responseJson, new { access_token = "" }).access_token;
             }
             return Oauth2Consts.ACCESS_DENIED;
         }
 
-        public Dictionary<string, string> RequestUserProfile()
+        public override Dictionary<string, string> RequestUserProfile()
         {
-            string profileUrl = string.Format(OAUTH_API_URL + "/v1/identity/openidconnect/userinfo/?schema=openid");
-            var header = new NameValueCollection();
-            header.Add("Accept-Language", "en_US");
-            header.Add("Authorization", "Bearer " + _client.Token);
+            const string profileUrl = OAUTH_API_URL + "/v1/identity/openidconnect/userinfo/?schema=openid";
+
+            var header = new NameValueCollection
+            {
+                {"Accept-Language", "en_US"},
+                {"Authorization", "Bearer " + _client.Token}
+            };
             string result = RestfullRequest.Request(profileUrl, "POST", "application/json", header, null, _client.Proxy);
             _client.ProfileJsonString = result;
-            PayPalClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result, new PayPalClient.UserProfile());
+            var data = JsonConvert.DeserializeAnonymousType(result, new PayPalClient.UserProfile());
 
-            var dictionary = new Dictionary<string, string>();
-            dictionary.Add("source", "PayPal");
-            dictionary.Add("email", data.Email);
-            dictionary.Add("verified_email", data.Verified_email);
-            dictionary.Add("name", data.Name);
-            dictionary.Add("given_name", data.Given_name);
-            dictionary.Add("family_name", data.Family_name);
-            dictionary.Add("link", data.User_id);
-            dictionary.Add("picture", data.Picture);
-            dictionary.Add("gender", data.Gender);
+            var dictionary = new Dictionary<string, string>
+            {
+                {"source", "PayPal"},
+                {"email", data.Email},
+                {"verified_email", data.Verified_email},
+                {"name", data.Name},
+                {"given_name", data.Given_name},
+                {"family_name", data.Family_name},
+                {"link", data.User_id},
+                {"picture", data.Picture},
+                {"gender", data.Gender}
+            };
             return dictionary;
         }
     }
