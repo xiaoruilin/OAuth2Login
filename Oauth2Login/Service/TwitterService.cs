@@ -19,10 +19,6 @@ namespace Oauth2Login.Service
     // https://twittercommunity.com/t/how-to-get-email-from-twitter-user-using-oauthtokens/558/155
     public class TwitterService : BaseOauth2Service
     {
-        private const string _requestTokenUrl = "https://api.twitter.com/oauth/request_token";
-        private const string _authenticateUrl = "https://api.twitter.com/oauth/authenticate";
-        private const string _accessTokenUrl = "https://api.twitter.com/oauth/access_token";
-
         private readonly OAuth2Util _util = new OAuth2Util();
 
         public TwitterService(AbstractClientProvider oClient) : base(oClient) { }
@@ -40,11 +36,14 @@ namespace Oauth2Login.Service
                 "oauth_version", "1.0"
                 );
 
-            var signature = getSha1Signature("POST", _requestTokenUrl, qstring);
-            var responseText = HttpPost(_requestTokenUrl, qstring + "&oauth_signature=" + Uri.EscapeDataString(signature));
+            const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
+            var signature = getSha1Signature("POST", requestTokenUrl, qstring);
+            var responseText = HttpPost(requestTokenUrl, qstring + "&oauth_signature=" + Uri.EscapeDataString(signature));
 
             var twitterAuthResp = new TwitterAuthResponse(responseText);
-            var oauthUrl = _authenticateUrl + "?oauth_token=" + twitterAuthResp.OAuthToken;
+
+            const string authenticateUrl = "https://api.twitter.com/oauth/authenticate";
+            var oauthUrl = authenticateUrl + "?oauth_token=" + twitterAuthResp.OAuthToken;
 
             return oauthUrl;
         }
@@ -109,8 +108,9 @@ namespace Oauth2Login.Service
                 "oauth_version", "1.0"
                 );
 
-            var signature = getSha1Signature("POST", _accessTokenUrl, postData);
-            var responseText = HttpPost(_accessTokenUrl, postData + "&oauth_signature=" + Uri.EscapeDataString(signature));
+            const string accessTokenUrl = "https://api.twitter.com/oauth/access_token";
+            var signature = getSha1Signature("POST", accessTokenUrl, postData);
+            var responseText = HttpPost(accessTokenUrl, postData + "&oauth_signature=" + Uri.EscapeDataString(signature));
 
             var twitterAuthResp = new TwitterAuthResponse(responseText);
 
@@ -121,8 +121,6 @@ namespace Oauth2Login.Service
 
         public override Dictionary<string, string> RequestUserProfile()
         {
-            const string profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json";
-
             string qstring = QueryStringBuilder.Build(
                 "oauth_consumer_key", _client.ClientId,
                 "oauth_nonce", _util.GetNonce(),
@@ -132,22 +130,17 @@ namespace Oauth2Login.Service
                 "oauth_version", "1.0"
                 );
 
+            const string profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json";
             var signature = getSha1Signature("GET", profileUrl, qstring, _client.TokenSecret);
             qstring += "&oauth_signature=" + Uri.EscapeDataString(signature);
 
-            //var headerVal = qstring.Replace("&", "\", ").Replace("=", "=\"") + "\"";
-            //var header = new NameValueCollection
-            //{
-            //    {"Authorization", "OAuth "+ headerVal}
-            //};
-
             string result = HttpGet(profileUrl + "?" + qstring);
             _client.ProfileJsonString = result;
-            //var data = JsonConvert.DeserializeAnonymousType(result, new FacebookClient.UserProfile());
 
-            var dictionary = new Dictionary<string, string>
-            {
-            };
+            // TODO: Use in future
+            var data = JsonConvert.DeserializeAnonymousType(result, new TwitterClient.UserProfile());
+            
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
             return dictionary;
         }
 
