@@ -139,8 +139,9 @@ namespace Oauth2Login.Service
 
             // TODO: Use in future
             var data = JsonConvert.DeserializeAnonymousType(result, new TwitterClient.UserProfile());
-            
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(result);
+
+            var flatString = JsonConvert.SerializeObject(data);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(flatString);
             return dictionary;
         }
 
