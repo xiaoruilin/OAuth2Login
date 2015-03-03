@@ -7,8 +7,11 @@ namespace Oauth2Login.Core
 {
     public class Oauth2LoginFactory
     {
-        public static T CreateClient<T>(string oConfigurationName) where T : AbstractClientProvider, new()
+        public static T CreateClient<T>(string configName) where T : AbstractClientProvider, new()
         {
+            if (String.IsNullOrEmpty(configName))
+                throw new Exception("Invalid configuration name");
+
             var ccRoot =
                 ConfigurationManager.GetSection("oauth2.login.configuration") as OAuthConfigurationSection;
 
@@ -18,37 +21,33 @@ namespace Oauth2Login.Core
 
                 IEnumerator configurationReader = ccRoot.OAuthVClientConfigurations.GetEnumerator();
 
+                OAuthConfigurationElement ccOauth = null;
                 while (configurationReader.MoveNext())
                 {
-                    if (configurationReader.Current is OAuthConfigurationElement)
+                    var currentOauthElement = configurationReader.Current as OAuthConfigurationElement;
+                    if (currentOauthElement != null && currentOauthElement.Name == configName)
                     {
-                        var clientConfigurationElement =
-                            configurationReader.Current as OAuthConfigurationElement;
-
-                        if (oConfigurationName != null)
-                        {
-                            if (clientConfigurationElement.Name == oConfigurationName)
-                            {
-                                var client = (T) Activator.CreateInstance(typeof (T), new object[]
-                                {
-                                    clientConfigurationElement.ClientId,
-                                    clientConfigurationElement.ClientSecret,
-                                    clientConfigurationElement.CallbackUrl,
-                                    clientConfigurationElement.Scope,
-                                    ccWebElem.AcceptedRedirectUrl,
-                                    ccWebElem.FailedRedirectUrl,
-                                    ccWebElem.Proxy
-                                });
-
-                                return client;
-                            }
-                        }
-                        else
-                        {
-                            throw new Exception("ERROR: [MultiOAuthFactroy] ConfigurationName is not found!");
-                        }
+                        ccOauth = currentOauthElement;
+                        break;
                     }
                 }
+
+                if (ccOauth != null)
+                {
+                    var constructorParams = new object[]
+                    {
+                        ccWebElem,
+                        ccOauth
+                    };
+                    var client = (T) Activator.CreateInstance(typeof (T), constructorParams);
+
+                    return client;
+                }
+                else
+                {
+                    throw new Exception("ERROR: [MultiOAuthFactroy] ConfigurationName is not found!");
+                }
+
             }
 
             return default(T);

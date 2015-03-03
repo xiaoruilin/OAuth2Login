@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Oauth2Login.Configuration;
 using Oauth2Login.Core;
 using Oauth2Login.Service;
 
@@ -13,9 +14,8 @@ namespace Oauth2Login.Client
         {
         }
 
-        public TwitterClient(string oClientid, string oClientsecret, string oCallbackUrl, string oScope,
-            string oAcceptedUrl, string oFailedUrl, string oProxy)
-            : base(oClientid, oClientsecret, oCallbackUrl, oScope, oAcceptedUrl, oFailedUrl, oProxy)
+        public TwitterClient(OAuthWebConfigurationElement ccRoot, OAuthConfigurationElement ccOauth)
+            : base(ccRoot, ccOauth)
         {
             //ServiceType = typeof(TwitterService);
         }
