@@ -37,8 +37,5 @@ namespace Oauth2Login.Core
 
         public string Token { get; set; }
         public string TokenSecret { get; set; }
-        
-        public Dictionary<string, string> Profile { get; set; }
-        public string ProfileJsonString { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
 using Oauth2Login.Client;
 using Oauth2Login.Core;
 
@@ -49,7 +50,7 @@ namespace Oauth2Login.Service
         // oh you abstract base class, leave something for children to implement
         public abstract string BeginAuthentication();
         public abstract string RequestToken(HttpRequestBase request);
-        public abstract Dictionary<string, string> RequestUserProfile();
+        public abstract void RequestUserProfile();
 
         // TODO: This looks horrible, refactor using generics
         public static BaseOauth2Service GetService(string id)
@@ -88,13 +89,19 @@ namespace Oauth2Login.Service
             _client.Token = tokenResult;
 
             // client profile
-            Dictionary<string, string> result = RequestUserProfile();
-            if (result != null)
-                _client.Profile = result;
-            else
-                throw new Exception("ERROR: [Oauth2LoginContext] Profile is not found!");
+            RequestUserProfile();
 
             return null;
         }
+
+        protected void ParseUserData<TData>(string json) where TData : BaseUserData
+        {
+            UserDataJsonSource = json;
+            UserData = JsonConvert.DeserializeAnonymousType(
+                UserDataJsonSource, (TData) Activator.CreateInstance(typeof (TData)));
+        }
+
+        public BaseUserData UserData { get; set; }
+        public string UserDataJsonSource { get; set; }
     }
 }

@@ -22,7 +22,15 @@ namespace Oauth2Login
             return Convert.ToInt64(ts.TotalSeconds).ToString();
         }
 
-        public string GetSignature(string sigBaseString, string consumerSecretKey, string requestTokenSecretKey = null)
+        public string GetSha1Signature(string httpMethod, string url, string data, string consumerSecretKey, string requestTokenSecretKey = null)
+        {
+            var sigBaseString = httpMethod + "&" + Uri.EscapeDataString(url) + "&" + Uri.EscapeDataString(data);
+            string signature = GetSignature(sigBaseString, consumerSecretKey, requestTokenSecretKey);
+
+            return signature;
+        }
+
+        private string GetSignature(string sigBaseString, string consumerSecretKey, string requestTokenSecretKey = null)
         {
             var signingKey = string.Format("{0}&{1}", consumerSecretKey, !string.IsNullOrEmpty(requestTokenSecretKey) ? requestTokenSecretKey : "");
             var byteKey = Encoding.ASCII.GetBytes(signingKey);

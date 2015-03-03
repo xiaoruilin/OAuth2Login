@@ -37,7 +37,7 @@ namespace Oauth2Login.Service
                 );
 
             const string requestTokenUrl = "https://api.twitter.com/oauth/request_token";
-            var signature = getSha1Signature("POST", requestTokenUrl, qstring);
+            var signature = _util.GetSha1Signature("POST", requestTokenUrl, qstring, _client.ClientSecret);
             var responseText = HttpPost(requestTokenUrl, qstring + "&oauth_signature=" + Uri.EscapeDataString(signature));
 
             var twitterAuthResp = new TwitterAuthResponse(responseText);
@@ -109,7 +109,7 @@ namespace Oauth2Login.Service
                 );
 
             const string accessTokenUrl = "https://api.twitter.com/oauth/access_token";
-            var signature = getSha1Signature("POST", accessTokenUrl, postData);
+            var signature = _util.GetSha1Signature("POST", accessTokenUrl, postData, _client.ClientSecret);
             var responseText = HttpPost(accessTokenUrl, postData + "&oauth_signature=" + Uri.EscapeDataString(signature));
 
             var twitterAuthResp = new TwitterAuthResponse(responseText);
@@ -119,7 +119,7 @@ namespace Oauth2Login.Service
             return twitterAuthResp.OAuthToken;
         }
 
-        public override Dictionary<string, string> RequestUserProfile()
+        public override void RequestUserProfile()
         {
             string qstring = QueryStringBuilder.Build(
                 "oauth_consumer_key", _client.ClientId,
@@ -131,26 +131,47 @@ namespace Oauth2Login.Service
                 );
 
             const string profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json";
-            var signature = getSha1Signature("GET", profileUrl, qstring, _client.TokenSecret);
+            var signature = _util.GetSha1Signature("GET", profileUrl, qstring, _client.ClientSecret, _client.TokenSecret);
             qstring += "&oauth_signature=" + Uri.EscapeDataString(signature);
 
             string result = HttpGet(profileUrl + "?" + qstring);
-            _client.ProfileJsonString = result;
 
-            // TODO: Use in future
-            var data = JsonConvert.DeserializeAnonymousType(result, new TwitterClient.UserProfile());
-
-            var flatString = JsonConvert.SerializeObject(data);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(flatString);
-            return dictionary;
+            ParseUserData<TwitterUserData>(result);
         }
+    }
 
-        private string getSha1Signature(string httpMethod, string url, string data, string extraSigningKey = null)
+    public class TwitterUserData : BaseUserData
+    {
+        public TwitterUserData() : base(ExternalAuthServices.Twitter) { }
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Screen_Name { get; set; }
+        public string Location { get; set; }
+        public string Profile_Location { get; set; }
+        public string Description { get; set; }
+        public string Url { get; set; }
+
+        public bool Protected { get; set; }
+        public bool Verified { get; set; }
+
+        public int Followers_Count { get; set; }
+        public int Friends_Count { get; set; }
+        public int Listed_Count { get; set; }
+        public int Favourites_Count { get; set; }
+        public int Statuses_Count { get; set; }
+
+        public bool Following { get; set; }
+        public bool Following_Request_Sent { get; set; }
+        public bool Notifications { get; set; }
+
+        // override
+        public override string UserId
         {
-            var sigBaseString = httpMethod + "&" + Uri.EscapeDataString(url) + "&" + Uri.EscapeDataString(data);
-            string signature = _util.GetSignature(sigBaseString, _client.ClientSecret, extraSigningKey);
-
-            return signature;
+            get { return Id.ToString(); }
+            set { Id = int.Parse(value); }
         }
+        public override string Email { get; set; }
+        public override string PhoneNumber { get; set; }
     }
 }

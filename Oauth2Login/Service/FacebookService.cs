@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 using System.Web;
 using Newtonsoft.Json;
 using Oauth2Login.Client;
@@ -48,27 +49,33 @@ namespace Oauth2Login.Service
             return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
         }
 
-        public override Dictionary<string, string> RequestUserProfile()
+        public override void RequestUserProfile()
         {
             string profileUrl = "https://graph.facebook.com/me?access_token=" + _client.Token;
 
             string result = HttpGet(profileUrl);
-            _client.ProfileJsonString = result;
-            var data = JsonConvert.DeserializeAnonymousType(result, new FacebookClient.UserProfile());
 
-            var dictionary = new Dictionary<string, string>
-            {
-                {"source", "Facebook"},
-                {"id", data.Id},
-                {"name", data.Name},
-                {"first_name", data.First_name},
-                {"last_name", data.Last_name},
-                {"link", data.Link},
-                {"gender", data.Gender},
-                {"email", data.Email},
-                {"picture", data.Picture}
-            };
-            return dictionary;
+            ParseUserData<FacebookUserData>(result);
         }
+    }
+
+    public class FacebookUserData : BaseUserData
+    {
+        public FacebookUserData() : base(ExternalAuthServices.Facebook) { }
+
+        public string Name { get; set; }
+        public string First_name { get; set; }
+        public string Last_name { get; set; }
+        public string Link { get; set; }
+        public string Gender { get; set; }
+        public string Picture { get; set; }
+
+        // override
+        [DataMember(Name = "Id")]
+        public override string UserId { get; set; }
+        [DataMember(Name = "Email")]
+        public override string Email { get; set; }
+        [DataMember(Name = "xxx")] // not implemented
+        public override string PhoneNumber { get; set; }
     }
 }

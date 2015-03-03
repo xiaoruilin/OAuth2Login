@@ -73,7 +73,8 @@ namespace Oauth2Login.Service
             var header = new NameValueCollection();
             header.Add("Accept-Language", "en_US");
             string result = RestfullRequest.Request(profileUrl, "GET", null, header, null, _client.Proxy);
-            _client.ProfileJsonString = result;
+
+            //_client.ProfileJsonString = result;
             WindowsLiveClient.UserProfile data = JsonConvert.DeserializeAnonymousType(result,
                 new WindowsLiveClient.UserProfile());
 

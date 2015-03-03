@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Web;
 using Newtonsoft.Json;
 using Oauth2Login.Client;
@@ -49,28 +50,33 @@ namespace Oauth2Login.Service
             return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
         }
 
-        public override Dictionary<string, string> RequestUserProfile()
+        public override void RequestUserProfile()
         {
             string profileUrl = "https://www.googleapis.com/oauth2/v1/userinfo?access_token=" + _client.Token;
 
             string result = HttpGet(profileUrl);
-            _client.ProfileJsonString = result;
-            var data = JsonConvert.DeserializeAnonymousType(result, new GoogleClient.UserProfile());
 
-            var dictionary = new Dictionary<string, string>
-            {
-                {"source", "Google"},
-                {"id", data.Id},
-                {"email", data.Email},
-                {"verified_email", data.Verified_email},
-                {"name", data.Name},
-                {"given_name", data.Given_name},
-                {"family_name", data.Family_name},
-                {"link", data.Link},
-                {"picture", data.Picture},
-                {"gender", data.Gender}
-            };
-            return dictionary;
+            ParseUserData<GoogleUserData>(result);
         }
+    }
+
+    public class GoogleUserData : BaseUserData
+    {
+        public GoogleUserData() : base(ExternalAuthServices.Google) { }
+
+        public string Verified_email { get; set; }
+        public string Name { get; set; }
+        public string Given_name { get; set; }
+        public string Family_name { get; set; }
+        public string Link { get; set; }
+        public string Picture { get; set; }
+        public string Gender { get; set; }
+
+        [DataMember(Name = "Id")]
+        public override string UserId { get; set; }
+        [DataMember(Name = "Email")]
+        public override string Email { get; set; }
+        [DataMember(Name = "xxx")] // not implemented
+        public override string PhoneNumber { get; set; }
     }
 }

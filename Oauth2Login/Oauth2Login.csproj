@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,6 +56,7 @@
     <Compile Include="Configuration\OAuthConfigurationElementCollection.cs" />
     <Compile Include="Configuration\OAuthConfigurationSection.cs" />
     <Compile Include="Configuration\OAuthWebConfigurationElement.cs" />
+    <Compile Include="Core\ExternalAuthServices.cs" />
     <Compile Include="Core\IClientService.cs" />
     <Compile Include="Core\IOAuthContext.cs" />
     <Compile Include="Core\Oauth2LoginFactory.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="Service\BaseOauth2Service.cs" />
     <Compile Include="Service\FacebookService.cs" />
     <Compile Include="Service\GoogleService.cs" />
+    <Compile Include="Service\BaseUserData.cs" />
     <Compile Include="Service\PayPalService.cs" />
     <Compile Include="Service\TwitterService.cs" />
     <Compile Include="Service\WindowsLiveService.cs" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 using System.Web;
 using Newtonsoft.Json;
 using Oauth2Login.Client;
@@ -66,7 +67,7 @@ namespace Oauth2Login.Service
             return JsonConvert.DeserializeAnonymousType(responseJson, new { access_token = "" }).access_token;
         }
 
-        public override Dictionary<string, string> RequestUserProfile()
+        public override void RequestUserProfile()
         {
             var profileUrl = ApiUrlOauth + "/v1/identity/openidconnect/userinfo/?schema=openid";
 
@@ -75,23 +76,43 @@ namespace Oauth2Login.Service
                 {"Accept-Language", "en_US"},
                 {"Authorization", "Bearer " + _client.Token}
             };
-            string result = RestfullRequest.Request(profileUrl, "POST", "application/json", header, null, _client.Proxy);
-            _client.ProfileJsonString = result;
-            var data = JsonConvert.DeserializeAnonymousType(result, new PayPalClient.UserProfile());
+            var result = RestfullRequest.Request(profileUrl, "POST", "application/json", header, null, _client.Proxy);
 
-            var dictionary = new Dictionary<string, string>
-            {
-                {"source", "PayPal"},
-                {"email", data.Email},
-                {"verified_email", data.Verified_email},
-                {"name", data.Name},
-                {"given_name", data.Given_name},
-                {"family_name", data.Family_name},
-                {"link", data.User_id},
-                {"picture", data.Picture},
-                {"gender", data.Gender}
-            };
-            return dictionary;
+            ParseUserData<PayPalUserData>(result);
         }
+    }
+
+    public class PayPalUserData : BaseUserData
+    {
+        public PayPalUserData() : base(ExternalAuthServices.PayPal) { }
+
+        public Address address { get; set; }
+        public string Language { get; set; }
+        public string Locale { get; set; }
+        public string Zoneinfo { get; set; }
+        public DateTime Birthday { get; set; }
+        public string Name { get; set; }
+        public string Given_name { get; set; }
+        public string Family_name { get; set; }
+        public string Verified_email { get; set; }
+        public string Gender { get; set; }
+        public string Picture { get; set; }
+
+        public class Address
+        {
+            public int Postal_code { get; set; }
+            public string Locality { get; set; }
+            public string Region { get; set; }
+            public string Country { get; set; }
+            public string Street_address { get; set; }
+        }
+
+        // override
+        [DataMember(Name = "User_id")]
+        public override string UserId { get; set; }
+        [DataMember(Name = "Email")]
+        public override string Email { get; set; }
+        [DataMember(Name = "Phone_number")]
+        public override string PhoneNumber { get; set; }
     }
 }
