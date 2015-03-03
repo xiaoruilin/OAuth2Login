@@ -64,21 +64,22 @@ namespace Oauth2Login.Service
     {
         public GoogleUserData() : base(ExternalAuthServices.Google) { }
 
-        public string Verified_email { get; set; }
-        //public string Name { get; set; }
-        public string Given_name { get; set; }
-        public string Family_name { get; set; }
-        public string Link { get; set; }
-        public string Picture { get; set; }
-        public string Gender { get; set; }
+        public string id { get; set; }
+        public string email { get; set; }
+        public string verified_email { get; set; }
+        public string name { get; set; }
+        public string given_name { get; set; }
+        public string family_name { get; set; }
+        public string link { get; set; }
+        public string picture { get; set; }
+        public string gender { get; set; }
 
-        [DataMember(Name = "Id")]
-        public override string UserId { get; set; }
-        [DataMember(Name = "Email")]
-        public override string Email { get; set; }
-        [DataMember(Name = "xxx")] // not implemented
-        public override string PhoneNumber { get; set; }
-        [DataMember(Name = "Name")]
-        public override string FullName { get; set; }
+        // override
+        public override string UserId { get { return id; } }
+        public override string Email { get { return email; } }
+        public override string FullName { get { return name; } }
+
+        // not implemented
+        public override string PhoneNumber { get { return null; } }
     }
 }

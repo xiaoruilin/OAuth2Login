@@ -63,25 +63,23 @@ namespace Oauth2Login.Service
     {
         public FacebookUserData() : base(ExternalAuthServices.Facebook) { }
 
-        public string Name { get; set; }
-        public string First_name { get; set; }
-        public string Last_name { get; set; }
-        public string Link { get; set; }
-        public string Gender { get; set; }
-        public string Picture { get; set; }
+        public string id { get; set; }
+        public string email { get; set; }
+        public string name { get; set; }
+        public string first_name { get; set; }
+        public string last_name { get; set; }
+        public string link { get; set; }
+        public string gender { get; set; }
+        public string picture { get; set; }
+        public string locale { get; set; }
+        public int timezone { get; set; }
+        public bool verified { get; set; }
 
         // override
-        [DataMember(Name = "Id")]
-        public override string UserId { get; set; }
-        [DataMember(Name = "Email")]
-        public override string Email { get; set; }
-        [DataMember(Name = "xxx")] // not implemented
-        public override string PhoneNumber { get; set; }
+        public override string UserId { get { return id; } }
+        public override string Email { get { return email; } }
+        public override string FullName { get { return name; } }
 
-        public override string FullName
-        {
-            get { return First_name + " " + Last_name; }
-            set { }
-        }
+        public override string PhoneNumber { get { return null; } }
     }
 }

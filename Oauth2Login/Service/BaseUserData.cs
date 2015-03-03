@@ -13,10 +13,10 @@ namespace Oauth2Login.Service
             AuthService = authService;
         }
 
-        public abstract string UserId { get; set; }
-        public abstract string Email { get; set; }
-        public abstract string PhoneNumber { get; set; }
-        public abstract string FullName { get; set; }
+        public abstract string UserId { get; }
+        public abstract string Email { get; }
+        public abstract string PhoneNumber { get; }
+        public abstract string FullName { get; }
         
         public ExternalAuthServices AuthService { get; private set; }
     }

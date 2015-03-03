@@ -145,35 +145,34 @@ namespace Oauth2Login.Service
     {
         public TwitterUserData() : base(ExternalAuthServices.Twitter) { }
 
-        //public int Id { get; set; }
-        //public string Name { get; set; }
-        public string Screen_Name { get; set; }
-        public string Location { get; set; }
-        public string Profile_Location { get; set; }
-        public string Description { get; set; }
-        public string Url { get; set; }
+        public int id { get; set; }
+        public string id_str { get; set; }
+        public string name { get; set; }
+        public string screen_Name { get; set; }
+        public string location { get; set; }
+        public string profile_Location { get; set; }
+        public string description { get; set; }
+        public string url { get; set; }
 
         public bool Protected { get; set; }
-        public bool Verified { get; set; }
+        public bool verified { get; set; }
 
-        public int Followers_Count { get; set; }
-        public int Friends_Count { get; set; }
-        public int Listed_Count { get; set; }
-        public int Favourites_Count { get; set; }
-        public int Statuses_Count { get; set; }
+        public int followers_Count { get; set; }
+        public int friends_Count { get; set; }
+        public int listed_Count { get; set; }
+        public int favourites_Count { get; set; }
+        public int statuses_Count { get; set; }
 
-        public bool Following { get; set; }
-        public bool Following_Request_Sent { get; set; }
-        public bool Notifications { get; set; }
+        public bool following { get; set; }
+        public bool following_Request_Sent { get; set; }
+        public bool notifications { get; set; }
 
         // override
-        [DataMember(Name="id_str")]
-        public override string UserId { get; set; }
-        [DataMember(Name = "name")]
-        public override string FullName { get; set; }
-        [DataMember(Name = "xxx1")] // not shared by twitter
-        public override string Email { get; set; }
-        [DataMember(Name = "xxx2")] // not shared by twitter
-        public override string PhoneNumber { get; set; }
+        public override string UserId { get { return id_str; } }
+        public override string FullName { get { return name; } }
+
+        // not shared by twitter
+        public override string Email { get { return null; } }
+        public override string PhoneNumber { get { return null; } }
     }
 }

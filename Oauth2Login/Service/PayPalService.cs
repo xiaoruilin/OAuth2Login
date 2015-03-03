@@ -89,38 +89,35 @@ namespace Oauth2Login.Service
     {
         public PayPalUserData() : base(ExternalAuthServices.PayPal) { }
 
+        public string user_id { get; set; }
+        public string email { get; set; }
+        public string phone_number { get; set; }
+        public string name { get; set; }
         public Address address { get; set; }
-        public string Language { get; set; }
-        public string Locale { get; set; }
-        public string Zoneinfo { get; set; }
-        public DateTime Birthday { get; set; }
+        public string language { get; set; }
+        public string locale { get; set; }
+        public string zoneinfo { get; set; }
+        public DateTime birthday { get; set; }
         //public string Name { get; set; }
-        public string Given_name { get; set; }
-        public string Family_name { get; set; }
-        public string Verified_email { get; set; }
-        public string Gender { get; set; }
-        public string Picture { get; set; }
+        public string given_name { get; set; }
+        public string family_name { get; set; }
+        public string verified_email { get; set; }
+        public string gender { get; set; }
+        public string picture { get; set; }
 
         public class Address
         {
-            public int Postal_code { get; set; }
-            public string Locality { get; set; }
-            public string Region { get; set; }
-            public string Country { get; set; }
-            public string Street_address { get; set; }
+            public int postal_code { get; set; }
+            public string locality { get; set; }
+            public string region { get; set; }
+            public string country { get; set; }
+            public string street_address { get; set; }
         }
 
         // override
-        [DataMember(Name = "User_id")]
-        public override string UserId { get; set; }
-
-        [DataMember(Name = "Email")]
-        public override string Email { get; set; }
-
-        [DataMember(Name = "Phone_number")]
-        public override string PhoneNumber { get; set; }
-
-        [DataMember(Name = "Name")]
-        public override string FullName { get; set; }
+        public override string UserId { get { return user_id; } }
+        public override string Email { get { return email; } }
+        public override string PhoneNumber { get { return phone_number; } }
+        public override string FullName { get { return name; } }
     }
 }
