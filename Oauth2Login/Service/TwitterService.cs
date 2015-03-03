@@ -148,23 +148,23 @@ namespace Oauth2Login.Service
         public int id { get; set; }
         public string id_str { get; set; }
         public string name { get; set; }
-        public string screen_Name { get; set; }
+        public string screen_name { get; set; }
         public string location { get; set; }
-        public string profile_Location { get; set; }
+        public string profile_location { get; set; }
         public string description { get; set; }
         public string url { get; set; }
 
         public bool Protected { get; set; }
         public bool verified { get; set; }
 
-        public int followers_Count { get; set; }
-        public int friends_Count { get; set; }
-        public int listed_Count { get; set; }
-        public int favourites_Count { get; set; }
-        public int statuses_Count { get; set; }
+        public int followers_count { get; set; }
+        public int friends_count { get; set; }
+        public int listed_count { get; set; }
+        public int favourites_count { get; set; }
+        public int statuses_count { get; set; }
 
         public bool following { get; set; }
-        public bool following_Request_Sent { get; set; }
+        public bool following_request_sent { get; set; }
         public bool notifications { get; set; }
 
         // override
