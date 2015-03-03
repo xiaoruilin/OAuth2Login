@@ -34,7 +34,7 @@ namespace MultipleOauth2Mvc.Controllers
             {
                 try
                 {
-                    var redirectUrl = service.ValidateLogin();
+                    var redirectUrl = service.ValidateLogin(Request);
                     if (redirectUrl != null)
                     {
                         return Redirect(redirectUrl);
