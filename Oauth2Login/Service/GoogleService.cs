@@ -15,43 +15,38 @@ namespace Oauth2Login.Service
 
         public override string BeginAuthentication()
         {
-            if (_client != null)
-            {
-                var qstring = QueryStringBuilder.BuildCompex(new[] { "scope" },
-                    "scope", _client.Scope,
-                    "state", "1",
-                    "redirect_uri", _client.CallBackUrl,
-                    "client_id", _client.ClientId,
-                    "response_type", "code",
-                    "approval_prompt", "auto",
-                    "access_type", "online"
-                    );
+            var qstring = QueryStringBuilder.BuildCompex(new[] { "scope" },
+                "scope", _client.Scope,
+                "state", "1",
+                "redirect_uri", _client.CallBackUrl,
+                "client_id", _client.ClientId,
+                "response_type", "code",
+                "approval_prompt", "auto",
+                "access_type", "online"
+                );
 
-                _oauthUrl = "https://accounts.google.com/o/oauth2/auth?" + qstring;
+            _oauthUrl = "https://accounts.google.com/o/oauth2/auth?" + qstring;
 
-                return _oauthUrl;
-            }
-            throw new Exception("ERROR: [GoogleService] BeginAuth the client not found!");
+            return _oauthUrl;
         }
 
         public override string RequestToken(HttpRequestBase request)
         {
-            string code = request.Params["code"];
-            if (code != null)
-            {
-                const string tokenUrl = "https://accounts.google.com/o/oauth2/token";
-                var postData = QueryStringBuilder.Build(
-                    "code", code,
-                    "client_id", _client.ClientId,
-                    "client_secret", _client.ClientSecret,
-                    "redirect_uri", _client.CallBackUrl,
-                    "grant_type", "authorization_code"
-                    );
+            var code = request.Params["code"];
+            if (String.IsNullOrEmpty(code))
+                return OAuth2Consts.ACCESS_DENIED;
 
-                string resonseJson = HttpPost(tokenUrl, postData);
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
-            }
-            return OAuth2Consts.ACCESS_DENIED;
+            const string tokenUrl = "https://accounts.google.com/o/oauth2/token";
+            var postData = QueryStringBuilder.Build(
+                "code", code,
+                "client_id", _client.ClientId,
+                "client_secret", _client.ClientSecret,
+                "redirect_uri", _client.CallBackUrl,
+                "grant_type", "authorization_code"
+                );
+
+            string resonseJson = HttpPost(tokenUrl, postData);
+            return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
         }
 
         public override Dictionary<string, string> RequestUserProfile()

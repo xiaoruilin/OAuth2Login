@@ -16,41 +16,36 @@ namespace Oauth2Login.Service
 
         public override string BeginAuthentication()
         {
-            if (_client != null)
-            {
-                var qstring = QueryStringBuilder.Build(
-                    "client_id", _client.ClientId,
-                    "redirect_uri", _client.CallBackUrl,
-                    "scope", _client.Scope,
-                    "state", "",
-                    "display", "popup"
-                    );
+            var qstring = QueryStringBuilder.Build(
+                "client_id", _client.ClientId,
+                "redirect_uri", _client.CallBackUrl,
+                "scope", _client.Scope,
+                "state", "",
+                "display", "popup"
+                );
 
-                _oauthUrl = "https://www.facebook.com/dialog/oauth?" + qstring;
+            _oauthUrl = "https://www.facebook.com/dialog/oauth?" + qstring;
 
-                return _oauthUrl;
-            }
-            throw new Exception("ERROR: BeginAuth the client not found!");
+            return _oauthUrl;
         }
 
         public override string RequestToken(HttpRequestBase request)
         {
-            string code = request.Params["code"];
-            if (code != null)
-            {
-                string tokenUrl = string.Format("https://graph.facebook.com/oauth/access_token?");
-                string postData = QueryStringBuilder.Build(
-                    "client_id", _client.ClientId,
-                    "redirect_uri", _client.CallBackUrl,
-                    "client_secret", _client.ClientSecret,
-                    "code", code
-                );
+            var code = request.Params["code"];
+            if (String.IsNullOrEmpty(code))
+                return OAuth2Consts.ACCESS_DENIED;
 
-                string resonseJson = HttpPost(tokenUrl, postData);
-                resonseJson = "{\"" + resonseJson.Replace("=", "\":\"").Replace("&", "\",\"") + "\"}";
-                return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
-            }
-            return OAuth2Consts.ACCESS_DENIED;
+            string tokenUrl = string.Format("https://graph.facebook.com/oauth/access_token?");
+            string postData = QueryStringBuilder.Build(
+                "client_id", _client.ClientId,
+                "redirect_uri", _client.CallBackUrl,
+                "client_secret", _client.ClientSecret,
+                "code", code
+            );
+
+            string resonseJson = HttpPost(tokenUrl, postData);
+            resonseJson = "{\"" + resonseJson.Replace("=", "\":\"").Replace("&", "\",\"") + "\"}";
+            return JsonConvert.DeserializeAnonymousType(resonseJson, new { access_token = "" }).access_token;
         }
 
         public override Dictionary<string, string> RequestUserProfile()

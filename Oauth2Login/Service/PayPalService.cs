@@ -36,39 +36,34 @@ namespace Oauth2Login.Service
 
         public override string BeginAuthentication()
         {
-            if (_client != null)
-            {
-                var qstring = QueryStringBuilder.Build(
-                    "client_id", _client.ClientId,
-                    "response_type", "code",
-                    "redirect_uri", _client.CallBackUrl,
-                    "scope", _client.Scope
-                    );
+            var qstring = QueryStringBuilder.Build(
+                "client_id", _client.ClientId,
+                "response_type", "code",
+                "redirect_uri", _client.CallBackUrl,
+                "scope", _client.Scope
+                );
 
-                _oauthUrl = LoginUrlOauth + "/webapps/auth/protocol/openidconnect/v1/authorize?" + qstring;
-                                          
-                return _oauthUrl;
-            }
-            throw new Exception("ERROR: BeginAuth the client not found!");
+            _oauthUrl = LoginUrlOauth + "/webapps/auth/protocol/openidconnect/v1/authorize?" + qstring;
+
+            return _oauthUrl;
         }
 
         public override string RequestToken(HttpRequestBase request)
         {
             var code = request.Params["code"];
-            if (code != null)
-            {
-                var oauthUrl = ApiUrlOauth + "/v1/identity/openidconnect/tokenservice";
-                var postData = QueryStringBuilder.Build(
-                    "grant_type", "authorization_code",
-                    "redirect_uri", _client.CallBackUrl,
-                    "code", code,
-                    "client_id", _client.ClientId,
-                    "client_secret", _client.ClientSecret
-                    );
-                var responseJson = HttpPost(oauthUrl, postData);
-                return JsonConvert.DeserializeAnonymousType(responseJson, new { access_token = "" }).access_token;
-            }
-            return OAuth2Consts.ACCESS_DENIED;
+            if (String.IsNullOrEmpty(code))
+                return OAuth2Consts.ACCESS_DENIED;
+
+            var oauthUrl = ApiUrlOauth + "/v1/identity/openidconnect/tokenservice";
+            var postData = QueryStringBuilder.Build(
+                "grant_type", "authorization_code",
+                "redirect_uri", _client.CallBackUrl,
+                "code", code,
+                "client_id", _client.ClientId,
+                "client_secret", _client.ClientSecret
+                );
+            var responseJson = HttpPost(oauthUrl, postData);
+            return JsonConvert.DeserializeAnonymousType(responseJson, new { access_token = "" }).access_token;
         }
 
         public override Dictionary<string, string> RequestUserProfile()
