@@ -98,7 +98,6 @@ namespace Oauth2Login.Service
         public string locale { get; set; }
         public string zoneinfo { get; set; }
         public DateTime birthday { get; set; }
-        //public string Name { get; set; }
         public string given_name { get; set; }
         public string family_name { get; set; }
         public string verified_email { get; set; }
