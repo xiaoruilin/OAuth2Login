@@ -33,5 +33,11 @@ namespace Oauth2Login.Configuration
         {
             get { return base["scope"].ToString(); }
         }
+
+        [ConfigurationProperty("endpoint", IsRequired = false)]
+        public string Endpoint
+        {
+            get { return base["endpoint"].ToString(); }
+        }
     }
 }
