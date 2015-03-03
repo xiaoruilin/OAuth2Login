@@ -34,8 +34,9 @@ namespace Oauth2Login.Core
         public string AcceptedRedirectUrl { get; set; }
         public string FailedRedirectUrl { get; set; }
         public string Proxy { get; set; }
-        
+
         public string Token { get; set; }
+        public string TokenSecret { get; set; }
         
         public Dictionary<string, string> Profile { get; set; }
         public string ProfileJsonString { get; set; }

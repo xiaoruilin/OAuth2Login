@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Web;
 using Oauth2Login.Client;
 using Oauth2Login.Core;
 
@@ -47,7 +48,7 @@ namespace Oauth2Login.Service
 
         // oh you abstract base class, leave something for children to implement
         public abstract string BeginAuthentication();
-        public abstract string RequestToken();
+        public abstract string RequestToken(HttpRequestBase request);
         public abstract Dictionary<string, string> RequestUserProfile();
 
         // TODO: This looks horrible, refactor using generics
@@ -76,10 +77,11 @@ namespace Oauth2Login.Service
             }
         }
 
-        public string ValidateLogin()
+
+        public string ValidateLogin(HttpRequestBase request)
         {
             // client token
-            string tokenResult = RequestToken();
+            string tokenResult = RequestToken(request);
             if (tokenResult == OAuth2Consts.ACCESS_DENIED)
                 return _client.FailedRedirectUrl;
 

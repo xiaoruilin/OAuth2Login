@@ -33,9 +33,9 @@ namespace Oauth2Login.Service
             throw new Exception("ERROR: BeginAuth the client not found!");
         }
 
-        public override string RequestToken()
+        public override string RequestToken(HttpRequestBase request)
         {
-            string code = HttpContext.Current.Request.Params["code"];
+            string code = request.Params["code"];
             if (code != null)
             {
                 string tokenUrl = string.Format("https://graph.facebook.com/oauth/access_token?");

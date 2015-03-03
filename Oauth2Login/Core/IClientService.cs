@@ -6,9 +6,5 @@ namespace Oauth2Login.Core
     {
         void CreateOAuthClient(IOAuthContext oContext);
         void CreateOAuthClient(AbstractClientProvider oClient);
-
-        string BeginAuthentication();
-        string RequestToken();
-        Dictionary<string, string> RequestUserProfile();
     }
 }
