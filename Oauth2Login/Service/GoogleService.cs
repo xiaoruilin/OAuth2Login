@@ -65,7 +65,7 @@ namespace Oauth2Login.Service
         public GoogleUserData() : base(ExternalAuthServices.Google) { }
 
         public string Verified_email { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string Given_name { get; set; }
         public string Family_name { get; set; }
         public string Link { get; set; }
@@ -78,5 +78,7 @@ namespace Oauth2Login.Service
         public override string Email { get; set; }
         [DataMember(Name = "xxx")] // not implemented
         public override string PhoneNumber { get; set; }
+        [DataMember(Name = "Name")]
+        public override string FullName { get; set; }
     }
 }

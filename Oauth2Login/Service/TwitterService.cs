@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -144,8 +145,8 @@ namespace Oauth2Login.Service
     {
         public TwitterUserData() : base(ExternalAuthServices.Twitter) { }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //public int Id { get; set; }
+        //public string Name { get; set; }
         public string Screen_Name { get; set; }
         public string Location { get; set; }
         public string Profile_Location { get; set; }
@@ -166,12 +167,13 @@ namespace Oauth2Login.Service
         public bool Notifications { get; set; }
 
         // override
-        public override string UserId
-        {
-            get { return Id.ToString(); }
-            set { Id = int.Parse(value); }
-        }
+        [DataMember(Name="id_str")]
+        public override string UserId { get; set; }
+        [DataMember(Name = "name")]
+        public override string FullName { get; set; }
+        [DataMember(Name = "xxx1")] // not shared by twitter
         public override string Email { get; set; }
+        [DataMember(Name = "xxx2")] // not shared by twitter
         public override string PhoneNumber { get; set; }
     }
 }

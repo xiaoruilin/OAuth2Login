@@ -33,7 +33,10 @@ namespace Oauth2Login.Service
             }
         }
 
-        public PayPalService(AbstractClientProvider oClient) : base(oClient) { }
+        public PayPalService(AbstractClientProvider oClient)
+            : base(oClient)
+        {
+        }
 
         public override string BeginAuthentication()
         {
@@ -91,7 +94,7 @@ namespace Oauth2Login.Service
         public string Locale { get; set; }
         public string Zoneinfo { get; set; }
         public DateTime Birthday { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string Given_name { get; set; }
         public string Family_name { get; set; }
         public string Verified_email { get; set; }
@@ -110,9 +113,14 @@ namespace Oauth2Login.Service
         // override
         [DataMember(Name = "User_id")]
         public override string UserId { get; set; }
+
         [DataMember(Name = "Email")]
         public override string Email { get; set; }
+
         [DataMember(Name = "Phone_number")]
         public override string PhoneNumber { get; set; }
+
+        [DataMember(Name = "Name")]
+        public override string FullName { get; set; }
     }
 }

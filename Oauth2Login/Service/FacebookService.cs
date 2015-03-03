@@ -77,5 +77,11 @@ namespace Oauth2Login.Service
         public override string Email { get; set; }
         [DataMember(Name = "xxx")] // not implemented
         public override string PhoneNumber { get; set; }
+
+        public override string FullName
+        {
+            get { return First_name + " " + Last_name; }
+            set { }
+        }
     }
 }
