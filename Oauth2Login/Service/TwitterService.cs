@@ -56,7 +56,7 @@ namespace Oauth2Login.Service
             public string OAuthTokenSecret { get; set; }
             public bool OAuthCallbackConfirmed { get; set; }
             public string OAuthAuthorizeUrl { get; set; }
-            public int UserId { get; set; }
+            public long UserId { get; set; }
             public string ScreenName { get; set; }
 
             public TwitterAuthResponse(string responseText)
@@ -81,7 +81,7 @@ namespace Oauth2Login.Service
                             OAuthAuthorizeUrl = splits[1];
                             break;
                         case "user_id":
-                            UserId = int.Parse(splits[1]);
+                            UserId = long.Parse(splits[1]);
                             break;
                         case "screen_name":
                             ScreenName = splits[1];
