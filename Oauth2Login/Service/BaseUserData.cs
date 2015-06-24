@@ -17,7 +17,9 @@ namespace Oauth2Login.Service
         public abstract string Email { get; }
         public abstract string PhoneNumber { get; }
         public abstract string FullName { get; }
-        
+
+        public string OAuthToken { get; set; }
+        public string OAuthTokenSecret { get; set; }
         public ExternalAuthServices AuthService { get; private set; }
     }
 }

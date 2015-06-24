@@ -36,5 +36,20 @@ namespace Oauth2Login.Core
         {
             return BuildCompex(null, keyValueEntries);
         }
+
+        internal static string BuildFromDictionary(Dictionary<string, object> paramsDict, bool orderByAlphabet)
+        {
+            var keysList = paramsDict.Keys.ToList();
+            keysList.Sort();
+
+            var queryList = new List<object>();
+            foreach (var key in keysList)
+            {
+                queryList.Add(key);
+                queryList.Add(paramsDict[key]);
+            }
+
+            return BuildCompex(null, queryList.ToArray());
+        }
     }
 }

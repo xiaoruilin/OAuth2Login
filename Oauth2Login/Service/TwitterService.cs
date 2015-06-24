@@ -11,6 +11,7 @@ using System.Web;
 using Newtonsoft.Json;
 using Oauth2Login.Client;
 using Oauth2Login.Core;
+using Oauth2Login.ServiceData.Twitter;
 
 namespace Oauth2Login.Service
 {
@@ -18,6 +19,11 @@ namespace Oauth2Login.Service
     // 4 years worth of fun: 
     // https://twittercommunity.com/t/oauth-2-0-support/253
     // https://twittercommunity.com/t/how-to-get-email-from-twitter-user-using-oauthtokens/558/155
+
+    // ALSO REALLY IMPORTANT: 
+    // Twitter QueryStringBuilder.Build parameters MUST BE ALPHABETICALLY ORDERED
+    // Yeah, talk about idiotic API...
+    // https://dev.twitter.com/oauth/overview/creating-signatures#note-lexigraphically
     public class TwitterService : BaseOauth2Service
     {
         private readonly OAuth2Util _util = new OAuth2Util();
@@ -115,6 +121,7 @@ namespace Oauth2Login.Service
 
             var twitterAuthResp = new TwitterAuthResponse(responseText);
 
+            _client.Token = twitterAuthResp.OAuthToken;
             _client.TokenSecret = twitterAuthResp.OAuthTokenSecret;
 
             return twitterAuthResp.OAuthToken;
@@ -122,22 +129,65 @@ namespace Oauth2Login.Service
 
         public override void RequestUserProfile()
         {
-            string qstring = QueryStringBuilder.Build(
-                "oauth_consumer_key", _client.ClientId,
-                "oauth_nonce", _util.GetNonce(),
-                "oauth_signature_method", "HMAC-SHA1",
-                "oauth_timestamp", _util.GetTimeStamp(),
-                "oauth_token", _client.Token,
-                "oauth_version", "1.0"
-                );
+            const string callingUrl = "https://api.twitter.com/1.1/account/verify_credentials.json";
 
-            const string profileUrl = "https://api.twitter.com/1.1/account/verify_credentials.json";
-            var signature = _util.GetSha1Signature("GET", profileUrl, qstring, _client.ClientSecret, _client.TokenSecret);
-            qstring += "&oauth_signature=" + Uri.EscapeDataString(signature);
-
-            string result = HttpGet(profileUrl + "?" + qstring);
+            var qstring = generatePayload("GET", callingUrl);
+            string result = HttpGet(callingUrl + "?" + qstring);
 
             ParseUserData<TwitterUserData>(result);
+        }
+
+        public bool VerifyFollowing(string screenName)
+        {
+            const string callingUrl = "https://api.twitter.com/1.1/friendships/lookup.json";
+
+            var qstring = generatePayload("GET", callingUrl, "screen_name", screenName);
+            string json = HttpGet(callingUrl + "?" + qstring);
+
+            var friendshipList = ParseJson<List<Friendship>>(json);
+            if (friendshipList.Count == 1 && friendshipList[0].connections.Contains("following"))
+                return true;
+            else
+                return false;
+        }
+
+        public TwitterUserData FollowUser(string screenName)
+        {
+            const string callingUrl = "https://api.twitter.com/1.1/friendships/create.json";
+
+            var qstring = generatePayload("POST", callingUrl, "follow", "true", "screen_name", screenName);
+            string json = HttpPost(callingUrl, qstring);
+
+            var twitterUser = ParseJson<TwitterUserData>(json);
+            return twitterUser;
+        }
+
+        private string generatePayload(string mode, string callingUrl, params object[] pars)
+        {
+            var paramsList = new Dictionary<string, object>
+            {
+                {"oauth_consumer_key", _client.ClientId},
+                {"oauth_nonce", _util.GetNonce()},
+                {"oauth_signature_method", "HMAC-SHA1"},
+                {"oauth_timestamp", _util.GetTimeStamp()},
+                {"oauth_token", _client.Token},
+                {"oauth_version", "1.0"}
+            };
+
+            for (int i = 0; i < pars.Length; i += 2)
+            {
+                var key = pars[i];
+                var val = pars[i + 1];
+
+                paramsList.Add((string)key, val);
+            }
+
+            var qstring = QueryStringBuilder.BuildFromDictionary(paramsList, true);
+
+            var signature = _util.GetSha1Signature(mode, callingUrl, qstring, _client.ClientSecret, _client.TokenSecret);
+            qstring += "&oauth_signature=" + Uri.EscapeDataString(signature);
+
+            return qstring;
         }
     }
 

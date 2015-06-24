@@ -91,14 +91,27 @@ namespace Oauth2Login.Service
             // client profile
             RequestUserProfile();
 
+            UserData.OAuthToken = _client.Token;
+            UserData.OAuthTokenSecret = _client.TokenSecret;
+
             return null;
+        }
+
+        public void ImpersonateUser(string oauthToken, string oauthTokenSecret)
+        {
+            _client.Token = oauthToken;
+            _client.TokenSecret = oauthTokenSecret;
         }
 
         protected void ParseUserData<TData>(string json) where TData : BaseUserData
         {
             UserDataJsonSource = json;
-            UserData = JsonConvert.DeserializeAnonymousType(
-                UserDataJsonSource, (TData) Activator.CreateInstance(typeof (TData)));
+            UserData = ParseJson<TData>(json);
+        }
+
+        protected T ParseJson<T>(string json)
+        {
+            return JsonConvert.DeserializeAnonymousType(json, (T)Activator.CreateInstance(typeof(T)));
         }
 
         public BaseUserData UserData { get; set; }
