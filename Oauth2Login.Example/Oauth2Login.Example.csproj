@@ -78,6 +78,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AuthCallbackResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -155,7 +156,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\AuthExternal\Success.cshtml" />
+    <Content Include="Views\AuthExternal\Callback.cshtml" />
     <Content Include="Views\AuthExternal\LoginFail.cshtml" />
     <Content Include="Views\AuthExternal\LoginSuccess.cshtml" />
   </ItemGroup>

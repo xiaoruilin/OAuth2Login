@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using MultipleOauth2Mvc.Models;
 using Oauth2Login.Core;
 using Oauth2Login.Service;
 
@@ -26,7 +27,7 @@ namespace MultipleOauth2Mvc.Controllers
             }
         }
 
-        public ActionResult Success(string id)
+        public ActionResult Callback(string id)
         {
             var service = BaseOauth2Service.GetService(id);
 
@@ -73,12 +74,5 @@ namespace MultipleOauth2Mvc.Controllers
         }
 
         // plumbing
-    }
-
-    public class AuthCallbackResult
-    {
-        public string ErrorText { get; set; }
-
-        public string RedirectUrl { get; set; }
     }
 }
