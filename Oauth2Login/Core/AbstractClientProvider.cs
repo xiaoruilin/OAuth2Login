@@ -20,7 +20,7 @@ namespace Oauth2Login.Core
             Scope = ccOauth.Scope;
             Endpoint = ccOauth.Endpoint;
             
-            AcceptedRedirectUrl = ccRoot.AcceptedRedirectUrl;
+            //AcceptedRedirectUrl = ccRoot.AcceptedRedirectUrl;
             FailedRedirectUrl = ccRoot.FailedRedirectUrl;
             Proxy = ccRoot.Proxy;
         }
@@ -31,7 +31,7 @@ namespace Oauth2Login.Core
         public string Scope { get; set; }
         public string Endpoint { get; set; }
 
-        public string AcceptedRedirectUrl { get; set; }
+        //public string AcceptedRedirectUrl { get; set; }
         public string FailedRedirectUrl { get; set; }
         public string Proxy { get; set; }
 

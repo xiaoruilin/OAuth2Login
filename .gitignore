@@ -170,4 +170,7 @@ pip-log.txt
 
 # Mac crap
 .DS_Store
-MultipleOauth2Mvc/Web.Oauth.config
+
+
+# Project specific
+Oauth2Login.Example/Web.Oauth.config
