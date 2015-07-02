@@ -9,15 +9,24 @@ using Oauth2Login.Service;
 
 namespace MultipleOauth2Mvc.Controllers
 {
+    public enum AuthExternalMode
+    {
+        Default = 0,
+        AttachLogin = 1
+    }
+
     public class AuthExternalController : Controller
     {
-        public ActionResult Login(string id)
+        public ActionResult Login(string id, AuthExternalMode? mode)
         {
             var service = BaseOauth2Service.GetService(id);
 
             if (service != null)
             {
                 var url = service.BeginAuthentication();
+
+                if (mode.HasValue)
+                    TempData["AuthExternalMode"] = mode;
 
                 return Redirect(url);
             }
@@ -41,19 +50,30 @@ namespace MultipleOauth2Mvc.Controllers
                         return Redirect(redirectUrl);
                     }
 
-                    // data in service._client now... think on how to expose it
-                    //var token = _context.Token;
-                    //var result = _context.Profile;
-                    //var strResult = _context.Client.ProfileJsonString;
-
-                    return View(new AuthCallbackResult
+                    // This is demo, so I am not handling saving of data into database
+                    // 
+                    AuthCallbackResult respModel = null;
+                    AuthExternalMode authMode = TempData["AuthExternalMode"] as AuthExternalMode? ?? AuthExternalMode.Default;
+                    if (authMode == AuthExternalMode.AttachLogin)
                     {
-                        RedirectUrl = "/AuthExternal/LoginSuccess"
-                    });
+                        // var userSession = GetUserSession();
+                        // if (userSession == null)
+                        //    throw new Exception("Initial attach call was probably coming from other domain / session");
+
+                        // var login = BaseAttachToExistingLogin(userSession.UserId, service.UserData);
+                        respModel = new AuthCallbackResult { RedirectUrl = "/Accounts/AttachLoginProviders" };
+                    }
+                    else
+                    {
+                        // respModel = InsertNewUserIntoDatabase(service);
+                        respModel = new AuthCallbackResult {RedirectUrl = "/AuthExternal/LoginSuccess"};
+                    }
+
+                    return View(respModel);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    throw;
+                    throw ex;
                     //RedirectToAction("Error");
                 }
             }
