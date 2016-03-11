@@ -59,20 +59,16 @@ namespace Oauth2Login.Service
             {
                 case "google":
                     return new GoogleService(Oauth2LoginFactory.CreateClient<GoogleClient>("Google"));
-                    break;
                 case "facebook":
                     return new FacebookService(Oauth2LoginFactory.CreateClient<FacebookClient>("Facebook"));
-                    break;
                 // Need to transition WindowLive to new base class
                 //case "windowslive":
                 //    return new WindowsLiveService(Oauth2LoginFactory.CreateClient<WindowsLiveClient>("WindowsLive"));
                 //    break;
                 case "paypal":
                     return new PayPalService(Oauth2LoginFactory.CreateClient<PayPalClient>("PayPal"));
-                    break;
                 case "twitter":
                     return new TwitterService(Oauth2LoginFactory.CreateClient<TwitterClient>("Twitter"));
-                    break;
                 default:
                     return null;
             }
