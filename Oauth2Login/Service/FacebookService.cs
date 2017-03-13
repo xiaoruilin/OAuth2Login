@@ -51,7 +51,8 @@ namespace Oauth2Login.Service
 
         public override void RequestUserProfile()
         {
-            string profileUrl = "https://graph.facebook.com/me?access_token=" + _client.Token;
+            var fields = "id,email,name,first_name,last_name,link,gender,locale,timezone,verified";
+            var profileUrl = "https://graph.facebook.com/me?fields="+ fields +"&access_token=" + _client.Token;
 
             string result = HttpGet(profileUrl);
 
