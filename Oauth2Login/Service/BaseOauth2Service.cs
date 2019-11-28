@@ -69,6 +69,8 @@ namespace Oauth2Login.Service
                     return new PayPalService(Oauth2LoginFactory.CreateClient<PayPalClient>("PayPal"));
                 case "twitter":
                     return new TwitterService(Oauth2LoginFactory.CreateClient<TwitterClient>("Twitter"));
+                case "familyxiao":
+                    return new FamilyXiaoService(Oauth2LoginFactory.CreateClient<TwitterClient>("FamilyXiao"));
                 default:
                     return null;
             }

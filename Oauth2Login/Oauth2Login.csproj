@@ -70,6 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceData\Twitter\Friendship.cs" />
     <Compile Include="Service\BaseOauth2Service.cs" />
+    <Compile Include="Service\FamilyXiaoService.cs" />
     <Compile Include="Service\FacebookService.cs" />
     <Compile Include="Service\GoogleService.cs" />
     <Compile Include="Service\BaseUserData.cs" />
